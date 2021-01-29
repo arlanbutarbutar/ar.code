@@ -1,0 +1,24 @@
+<?php
+    error_reporting(0);
+    $self           = $_SERVER['PHP_SELF'];
+    $interface      = $_SERVER['GATEWAY_INTERFACE'];
+    $ip             = $_SERVER['SERVER_ADDR'];
+    $name_server    = $_SERVER['SERVER_NAME'];
+    $software       = $_SERVER['SERVER_SOFTWARE'];
+    $protocol       = $_SERVER['SERVER_PROTOCOL'];
+    $method         = $_SERVER['REQUEST_METHOD'];
+    $request_time   = $_SERVER['REQUEST_TIME'];
+    $query_string   = $_SERVER['QUERY_STRING'];
+    $http_accept    = $_SERVER['HTTP_ACCEPT'];
+    $accept_charset = $_SERVER['HTTP_ACCEPT_CHARSET'];
+    $host           = $_SERVER['HTTP_HOST'];
+    $referer        = $_SERVER['HTTP_REFERER'];
+    $http           = $_SERVER['HTTPS'];
+    $remote_addr    = $_SERVER['REMOTE_ADDR'];
+    $remote_host    = $_SERVER['REMOTE_HOST'];
+    $remote_port    = $_SERVER['REMOTE_PORT'];
+    $serverSignature= $_SERVER['SERVER_SIGNATURE'];
+    $translate      = $_SERVER['PATH_TRANSLATED'];
+    $script_name    = $_SERVER['SCRIPT_NAME'];
+    $url            = $_SERVER['SCRIPT_URI'];
+    $user_agent     = $_SERVER['HTTP_USER_AGENT'];

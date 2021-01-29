@@ -1,0 +1,1 @@
+<?php header("Location: ../../auth/toUser.php");exit;
