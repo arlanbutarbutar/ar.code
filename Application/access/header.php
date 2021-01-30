@@ -1,7 +1,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
 <!-- == icon & name == -->
     <link rel="shortcut icon" href="https://i.ibb.co/yd3kkKw/logo-ugdhp.png">
     <script type='text/javascript'>
@@ -22,11 +21,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Montserrat&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sedgwick+Ave&family=Zilla+Slab+Highlight&display=swap" rel="stylesheet">
 <!-- == style css == -->
-    <link href="<?php if(isset($_SESSION['id-user'])){echo "../";}?>Assets/css/scroll.css" rel="stylesheet">
+    <link href="<?php if(isset($_SESSION['id-user']) || isset($_SESSION['auth'])){echo "../";}?>Assets/css/scroll.css" rel="stylesheet">
     <style>
         *{
             overflow-x: hidden;
         }
+
+        /* == fonts == */
+        .montserrat{
+            font-family: 'Montserrat', sans-serif;
+        }
+        .comfortaa{
+            font-family: 'Comfortaa', cursive;
+        }
+        .sedgwick{
+            font-family: 'Sedgwick Ave', cursive;
+        }
+        .zilla{
+            font-family: 'Zilla Slab Highlight', cursive;
+        }
+        /* == end font == */
+
         .icon-scale{
             transform: none;
             transition: 0.25s;
@@ -51,17 +66,8 @@
             font-weight: bold;
             transform: scale(1.1);
         }
-        .montserrat{
-            font-family: 'Montserrat', sans-serif;
-        }
-        .comfortaa{
-            font-family: 'Comfortaa', cursive;
-        }
         .col-one-section h1{
             margin-top: 100px
-        }
-        .sedgwick{
-            font-family: 'Sedgwick Ave', cursive;
         }
         .montserrat button{
             font-size: 36px;
@@ -73,9 +79,6 @@
         .montserrat button:hover{
             transform: scale(1.2);
             letter-spacing: 3px;
-        }
-        .zilla{
-            font-family: 'Zilla Slab Highlight', cursive;
         }
         .video-container{
             position: absolute;
@@ -101,6 +104,30 @@
             background: #1b1b1b;
             opacity: 0.8;
         }
+        .video-news{
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .video-news{
+            object-fit: cover;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .video-news::after{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to right, #fff, #1b1b1b);
+            opacity: 0.8;
+        }
         .location-ar{
             width: 1200px;
             height: 550px;
@@ -108,18 +135,82 @@
         .landing-image{
             display: block;
         }
+        .news .card{
+            margin-right: 50px;
+        }
+        .content-news{
+            margin-top: 80px;
+        }
+        .btn-primary-ar{
+            color: #fff;
+            background: #7BB402;
+            transform: none;
+            transition: 0.25s ease-in-out;
+            border-radius: 40px;
+        }
+        .btn-primary-ar:hover{
+            color: #1D1D1D;
+            background: #5F8C01;
+            transform: scale(1.1);
+            border-radius: 5px;
+        }
+        .services h1{
+            margin-top: 100px;
+        }
+        .contact .card{
+            margin-top: 120px;
+        }
+        .contact .col-one-section{
+            margin: 50px
+        }
+        .animated-ar img{
+            animation-name: signin;
+            animation-duration: 4s;
+        }
+        @keyframes signin {
+            0%   {left:0px; top:0px;}
+            25%  {left:200px; top:0px;}
+            50%  {left:200px; top:200px;}
+            75%  {left:0px; top:200px;}
+            100% {left:0px; top:0px;}
+        }
         @media screen and (max-width: 640px){
             .landing-image{
                 display: none;
             }
             .copyright{
                 text-align: center;
+                color: #fff;
             }
             .sosmed{
                 display: none;
             }
             .col-one-section{
                 width: 100%;
+            }
+            .video-news::after{
+                background: linear-gradient(to bottom, #fff, #1b1b1b);
+            }
+            .news{
+                margin-top: -50px; 
+            }
+            .news .card{
+                margin-right: 0;
+            }
+            .content-news{
+                margin-top: 0;
+            }
+            .services h1{
+                margin-top: -5px;
+            }
+            .contact h1{
+                margin-top: -5px;
+            }
+            .contact .card{
+                margin-top: 0;
+            }
+            .collapse-ar{
+                background: #1D1D1D;
             }
         }
     </style>
@@ -149,14 +240,14 @@
             }
             .btn-primary-ar{
                 color: #fff;
-                background: #9BDA15;
+                background: #7BB402;
                 transform: none;
                 transition: 0.25s ease-in-out;
                 border-radius: 40px;
             }
             .btn-primary-ar:hover{
                 color: #1D1D1D;
-                background: #89C30D;
+                background: #5F8C01;
                 transform: scale(1.1);
                 border-radius: 5px;
             }
@@ -177,4 +268,6 @@
         </style>
     <?php } ?>
 <!-- == icons fontawesome == -->
-    <link href="<?php if(isset($_SESSION['id-user'])){echo "../";}?>Assets/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="<?php if(isset($_SESSION['id-user']) || isset($_SESSION['auth'])){echo "../";}?>Assets/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+<!-- == other == -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />

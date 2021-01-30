@@ -1,10 +1,10 @@
-<?php if (!isset($_SESSION)) {
-    session_start();
+<?php if (!isset($_SESSION)) {session_start();}
+    if(isset($_SESSION['auth'])){unset($_SESSION['auth']);}
     require_once("Application/session/redirect-user.php");
     require_once("Application/controller/script.php");
     $_SESSION['page-name']="";
-} ?>
-<!-- == landing page == -->
+?>
+<!-- == Early page == -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -13,7 +13,7 @@
     <body id="page-top">
         <!-- == view location == -->
             <?php if(isset($_SESSION['view-location'])){?>
-                <div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: block; padding-right: 15px; background: rgba(0, 0, 0, 0.781); " aria-modal="true">
+                <div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: block; padding-right: 15px; background: rgba(0, 0, 0, 0.781); " aria-modal="true" data-aos="fade-in" data-aos-delay="0">
                     <div class="col-md-12 m-auto text-center justify-content-center align-items-center">
                         <div class="card shadow border-0">
                             <div class="card-body">
@@ -27,24 +27,26 @@
                     </div>
                 </div>
             <?php }?>
-        <!-- == Landing bg-video section == -->
+        <!-- == Early bg-video section == -->
             <div class="video-container">
-                <video playsinline autoplay muted loop id="bgvid">
-                    <source src="Assets/video/landing-section.mp4" type="video/mp4">
+                <video playsinline autoplay muted loop>
+                    <source src="Assets/video/landing-section-1.mp4" type="video/mp4">
                 </video>
             </div>
         <?php require_once("Application/access/navbar.php") ?>
-        <!-- == landing section == -->
+        <!-- == Early section == -->
             <div class="container-fluid">
                 <div class="d-flex justify-content-between flex-wrap">
                     <div class="col-lg-5 mx-5 my-5 col-one-section overflow-hidden">
-                        <h1 class="d-flex montserrat text-light font-weight-bold">UGD <form action="" method="POST" class="overflow-hidden"><button type="submit" name="view-location" class="btn btn-sedgwick-ar font-weight-bold sedgwick mt-n1 text-light" data-toggle="tooltip" data-placement="right" title="Look at the service location here">HP</button></form></h1>
+                        <h1 class="d-flex montserrat text-light font-weight-bold" data-aos="fade-in" data-aos-delay="0">UGD <form action="" method="POST" class="overflow-hidden"><button type="submit" name="view-location" class="btn btn-sedgwick-ar font-weight-bold sedgwick mt-n1 text-light" data-toggle="tooltip" data-placement="right" title="Look at the service location here">HP</button></form></h1>
                         <div class="col-11 p-0">
-                            <p class="comfortaa text-light">Cellphone and computer equipment repair services and website-based application development services.</p>
+                            <p class="comfortaa text-light" data-aos="fade-in" data-aos-delay="100">Cellphone and computer equipment repair services and website-based application development services.</p>
                         </div>
-                        <a href="contact" class="btn btn-primary-ar btn-sm font-weight-bold p-2 mx-2 mt-3">Contact us!</a>
+                        <div class="overflow-hidden pb-1" data-aos="fade-in" data-aos-delay="200">
+                            <a href="contact" class="btn btn-primary-ar btn-sm font-weight-bold p-2 mx-2 mt-3">Contact us!</a>
+                        </div>
                     </div>
-                    <div class="col-lg-6 my-auto">
+                    <div class="col-lg-6 my-auto" data-aos="fade-in" data-aos-delay="0">
                         <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
