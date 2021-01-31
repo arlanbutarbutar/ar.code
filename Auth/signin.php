@@ -22,14 +22,14 @@
             <div class="container-fluid">
                 <div class="d-flex justify-content-start flex-wrap contact">
                     <div class="col-lg-6 col-one-section overflow-hidden animated-ar">
-                        <img src="../Assets/img/img-web/signin.png" alt="image signin" style="width: 450px">
+                        <img src="../Assets/img/img-web/signin.png" alt="image signin">
                     </div>
                     <div class="col-lg-5 my-auto m-0 p-0" data-aos="fade-in" data-aos-delay="0">
                         <div class="col-md-10 mx-auto">
                             <div class="card border-0 shadow">
                                 <div class="card-body m-auto text-center">
                                     <h3 class="text-dark font-weight-bold montserrat">Sign In</h3>
-                                    <p class="text-dark comfortaa d-flex flex-wrap">Don't have an account yet? please register <a href="signup" class="nav-link m-auto text-decoration-none">here.</a></p>
+                                    <p class="text-dark justify-content-center comfortaa d-flex flex-wrap">Don't have an account yet? please register <a href="signup" class="nav-link m-auto text-decoration-none">here.</a></p>
                                     <?php if(isset($message_success)){echo $message_success;}if(isset($message_danger)){echo$message_danger;}?>
                                     <form method="POST" action="" class="mt-4">
                                         <div class="form-group">
@@ -50,7 +50,7 @@
                                             </div>
                                             <div class="col-lg-6">
                                                 <div class="form-group mt-n2">
-                                                    <a href="forget-password" class="nav-link text-decoration-none">Forget Password</a>
+                                                    <a href="forgot-password" class="nav-link text-decoration-none">Forgot Password</a>
                                                 </div>
                                             </div>
                                         </div>

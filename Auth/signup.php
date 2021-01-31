@@ -21,7 +21,7 @@
         <!-- == Sign Up section == -->
             <div class="container-fluid">
                 <div class="d-flex justify-content-start flex-wrap contact">
-                    <div class="col-lg-6 col-one-section overflow-hidden">
+                    <div class="col-lg-6 col-one-section overflow-hidden animated-ar">
                         <img src="../Assets/img/img-web/signup.png" alt="image signup">
                     </div>
                     <div class="col-lg-5 my-auto m-0 p-0" data-aos="fade-in" data-aos-delay="0">

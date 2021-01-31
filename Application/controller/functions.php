@@ -1,126 +1,138 @@
 <?php if(!isset($_SESSION)){session_start();}
     require_once('time.php');require_once('server.php');
 
-    // class global{
-        function send_msg_visitor($msg){global $conn;
+    // == class Public ==
+        function contact($msg){global $conn;
             $name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['name']))));
             $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['email']))));
             $pesan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['pesan']))));
-            // jika di global gunakan ini___
-            require_once("mail-send.php");
-            $to       = "arlan270899@gmail.com";
-            $subject  = 'Pesan vis-'.$name;
+            require "mail-send.php";
+            $to       = 'arlan270899@gmail.com';
+            $subject  = 'Visitor Messages '.$name;
             $message  = '
                 <div style="margin: 0; padding: 0;">
-                    <p>'.$email.' mengirim pesan berikut: '.$pesan.'</p>
-                </div>';
+                    <p>'.$email.' send the following message: '.$pesan.'</p>
+                </div>
+            ';
             smtp_mail($to, $subject, $message, '', '', 0, 0, true);
             return mysqli_affected_rows($conn);
         }
-        function daftar($daftar){global $conn,$host,$user_agent,$ip,$referer,$remote_addr;
-            if($ip=='::1'){$ip="ADDR=>".$remote_addr;}
-            $cek_id_user=mysqli_query($conn, "SELECT * FROM users ORDER BY id_user DESC LIMIT 1");
-            $loop_id_user=mysqli_fetch_assoc($cek_id_user);
-            if(isset($loop_id_user['id_user'])){
-                $iduser=$loop_id_user['id_user'];
-                $id_user=$iduser+1;
-            }else if(!isset($loop_id_user['id_user'])){
-                $id_user=202027;
-            }
-            $cek_id_security=mysqli_query($conn, "SELECT * FROM users_security ORDER BY id_security DESC LIMIT 1");
-            $loop_id_security=mysqli_fetch_assoc($cek_id_security);
-            if(isset($loop_id_security['id_security'])){
-                $idsecurity=$loop_id_security['id_security'];
-                $id_security=$idsecurity+1;
-            }else if(!isset($loop_id_security['id_security'])){
-                $id_security=202027;
-            }
-            $id_user_hash=password_hash($id_user, PASSWORD_DEFAULT);
-            $first_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $daftar['first-name']))));
-            $last_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $daftar['last-name']))));
-            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $daftar['email']))));
-            $cek_user=mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-            if(mysqli_num_rows($cek_user)>0){
-                $_SESSION['message-danger']='Maaf, akun anda '. $email .' sudah terdaftar!';
-                header("Location: index#request");
-                return false;
-            }else if(mysqli_num_rows($cek_user)==0){
-                $cek_employee=mysqli_query($conn, "SELECT * FROM employee WHERE email='$email'");
-                if(mysqli_num_rows($cek_employee)>0){
-                    $_SESSION['message-danger']='Maaf, akun anda: '. $email .' sudah terdaftar!';
-                    header("Location: index#request");
-                    return false;
-                }
-            }
-            $password=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $daftar['password']))));
-            $cekPass=strlen($password);
-            if($cekPass<8){
-                $_SESSION['message-danger']="Maaf, password kamu terlalu pendek (Min: 8)!";
-                header("Location: index#request");
-                return false;
-            }
-            $password_hash=password_hash($password, PASSWORD_DEFAULT);
-            $kebijakan="Setuju";
-            $id_log=$id_user;
-            $is_active=2;
-            $id_role=13;
-            $date_created=date("l, d M Y");
-            require_once("mail-send-auth.php");
-            $to       = $email;
-            $subject  = 'Verification Service Netmedia Framecode';
-            $message  = '
-                <div style="margin: 0; padding: 0;">
-                    <p>Selamat anda telah terdaftar di Services Netmedia Framecode Group tempat perbaikan handphone dan laptop juga jasa pembuatan website. Silakan klik link di bawah ini untuk verifikasi akun anda:</p><br>
-                    <a href="https://www.ugdhp.com/auth/verification-success?u='.$id_user_hash.'&c='.$id_user.'" style="font-weight: bold">'.$id_user_hash.'</a>
-                    <p>Kode ini bersifat rahasia jangan berikan kepada siapapun itu. Baca juga peraturan kebijakan layanan kami di
-                        <a href="https://www.ugdhp.com/terms-conditions" style="text-decoration: none;">disini</a>
-                    </p>
-                </div>';
-            smtp_mail($to, $subject, $message, '', '', 0, 0, true);
-            mysqli_query($conn, "INSERT INTO users(id_user,first_name,last_name,email,password,id_security,kebijakan,id_role,is_active,date_created) VALUES('$id_user','$first_name','$last_name','$email','$password_hash','$id_security','$kebijakan','$id_role','$is_active','$date_created')");
-            mysqli_query($conn, "INSERT INTO users_security VALUES('$id_security','$password','$host','$user_agent','$ip','$referer')");
-            return mysqli_affected_rows($conn);
-        }
-        function re_verify($re){global $conn;
-            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $re['email']))));
+        function signin($data){global $conn;
+            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email']))));
+            $password=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password']))));
             $users=mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
             if(mysqli_num_rows($users)>0){
                 while($row=mysqli_fetch_assoc($users)){
-                    $status_akun=$row['is_active'];
-                    if($status_akun==1){
-                        $_SESSION['message-danger']="Maaf, akun anda sudah terverifikasi, mungkin ada kesalahan data. Silakan login <a href='login?un=".$_SESSION['visitor']."'>disini</a>";
-                        header("Location: verification-check");
-                        return false;
-                    }else if($status_akun==2){
-                        $id_user=$row['id_user'];
-                        $id_user_hash=password_hash($id_user, PASSWORD_DEFAULT);
-                        $email=$row['email'];
-                        $first_name=$row['first_name'];
-                        require "mail-send.php";
-                        $to       = $email;
-                        $subject  = 'Verification Service Netmedia Framecode';
-                        $message  = '
-                            <div style="margin: 0; padding: 0;">
-                                <p>Silakan klik link di bawah ini untuk verifikasi ulang akun anda:</p><br>
-                                <a href="https://ugdhp.com/auth/verification-success?u='.$id_user_hash.'&c='.$id_user.'" style="font-weight: bold">'.$id_user_hash.'</a>
-                                <p>Kode ini bersifat rahasia jangan berikan kepada siapapun itu. Baca juga peraturan kebijakan layanan kami di
-                                    <a href="https://www.ugdhp.com/terms-conditions" style="text-decoration: none;">disini</a>
-                                </p>
-                            </div>';
-                        smtp_mail($to, $subject, $message, '', '', 0, 0, true);
-                        $_SESSION['id-verify']=$id_user_hash;
-                        return mysqli_affected_rows($conn);
+                    $pass=$row['password'];
+                    if(password_verify($password, $pass)){
+                        if(isset($_SESSION['message-danger'])||isset($_SESSION['message-success'])){unset($_SESSION['message-danger']);unset($_SESSION['message-success']);}
+                        if(isset($_SESSION['auth'])){unset($_SESSION['auth']);}
+                        $_SESSION['id-user']=$row['id_user'];
+                        $_SESSION['id-log']=$row['id_log'];
+                        $_SESSION['is-active']=$row['is_active'];
+                        $_SESSION['id-access']=$row['id_access'];
+                        $_SESSION['id-role']=$row['id_role'];
+                        $_SESSION['username']=$row['first_name'];
+                        if(isset($data['remember-me'])||!empty($data['remember-me'])){
+                            setcookie('mobileAR',$row['id_user'],time());
+                            setcookie('keyAR',hash('sha256', $row['email']),time());
+                        }
+                    }else{
+                        $_SESSION['message-danger']="Sorry, the password you entered is wrong, please try again.";
+                        header("Location: signin");return false;
                     }
                 }
             }else if(mysqli_num_rows($users)==0){
-                $_SESSION['message-danger']="Maaf, akun anda belum terdaftar. Silakan daftarkan akun anda <a href='registration?un=".$_SESSION['visitor']."'>disini</a>";
-                header("Location: verification-check");
-                return false;
+                $_SESSION['message-danger']="Sorry your account is not registered yet! please register first.";
+                header("Location: signin");return false;
+            }
+            return mysqli_affected_rows($conn);
+        }
+        function signup($data){global $conn; // == mail-access => 1/signup
+            $first_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['first-name']))));
+            $last_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['last-name']))));
+            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email']))));
+            $pass=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password']))));
+            $check_lenght_pass=strlen($pass);
+            if($check_lenght_pass<8){
+                $_SESSION['message-danger']="Sorry, your password is too short (Min: 8)!";
+                header("Location: signup");return false;
+            }
+            $kebijakan="SETUJU";
+            $date_created=date("l, d M Y");
+            $check_users=mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+            if(mysqli_num_rows($check_users)>0){
+                $_SESSION['message-danger']="Sorry, the account you registered already exists!";
+                header("Location: signup");return false;
+            }
+            $encrypt_email=password_hash($email, PASSWORD_DEFAULT);
+            $data_encrypt=crc32($email);
+            $password=password_hash($pass, PASSWORD_DEFAULT);
+            $_SESSION['mail-access']=1; require "mail-send.php";
+            $to       = $email;
+            $subject  = 'Account Verification UGD HP';
+            $message  = '
+                <div style="margin: 0; padding: 0;">
+                    <p>Congratulations, you have registered in the UGD HP where you can repair cellphones and laptops as well as website creation services. Please click the link below to verify your account:</p><br>
+                    <a href="http://localhost/ar.code/Auth/verification-success?auth='.$encrypt_email.'&crypt='.$data_encrypt.'" style="font-weight: bold">'.$encrypt_email.'</a>
+                    <p>This code is confidential do not give it to anyone. Also read our terms of service policy at
+                        <a href="www.ugdhp.com" style="text-decoration: none;">here.</a>
+                    </p>
+                </div>
+            ';
+            smtp_mail($to, $subject, $message, '', '', 0, 0, true);
+            mysqli_query($conn, "INSERT INTO users(data_encrypt,first_name,last_name,email,password,kebijakan,date_created) VALUES('$data_encrypt','$first_name','$last_name','$email','$password','$kebijakan','$date_created')");
+            return mysqli_affected_rows($conn);
+        }
+        function verification($data){global $conn;
+            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['auth']))));
+            $crypt=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['crypt']))));
+            $check_users=mysqli_query($conn, "SELECT * FROM users WHERE data_encrypt='$crypt'");
+            $row=mysqli_fetch_assoc($check_users);
+            $email_pass=$row['email'];
+            if(password_verify($email_pass, $email)){
+                mysqli_query($conn, "UPDATE users SET is_active='1' WHERE data_encrypt='$crypt'");
+                return mysqli_affected_rows($conn);
             }
         }
-    // }
-
-    // class private{
+        function forgot_password($data){global $conn;
+            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email']))));
+            $check_users=mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+            if(mysqli_num_rows($check_users)==0){
+                $_SESSION['message-danger']="Sorry your account is not registered yet! please register first.";
+                header("Location: forgot-password");return false;
+            }else if(mysqli_num_rows($check_users)>0){
+                $_SESSION['email']=$email;
+                return mysqli_affected_rows($conn);
+            }
+        }
+        function new_password($data){global $conn;
+            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $_SESSION['email']))));
+            $pass=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password']))));
+            $check_lenght_pass=strlen($pass);
+            if($check_lenght_pass<8){
+                $_SESSION['message-danger']="Sorry, your password is too short (Min: 8)!";
+                header("Location: new-password");return false;
+            }
+            $re_password=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['re-password']))));
+            $check_users=mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+            $row=mysqli_fetch_assoc($check_users);
+            $password_pass=$row['password'];
+            if(password_verify($pass, $password_pass)){
+                $_SESSION['message-danger']="Sorry, your password is still the same as the old one, we suggest that you only use the password that you remember.";
+                header("Location: new-password");return false;
+            }else{
+                if($pass==$re_password){
+                    $password=password_hash($pass, PASSWORD_DEFAULT);
+                    mysqli_query($conn, "UPDATE users SET password='$password' WHERE email='$email'");
+                    return mysqli_affected_rows($conn);
+                }else{
+                    $_SESSION['message-danger']="Sorry, the passwords you entered are not the same.";
+                    header("Location: new-password");return false;
+                }
+            }
+        }
+    // == class Private =={
         if(isset($_SESSION['id-employee'])){
             if(isset($_SESSION['id-role'])){
                 if($_SESSION['id-role']<13){
@@ -2105,8 +2117,4 @@
             // }
 
         }
-    // }
-
-    // class public user{
-        if(isset($_SESSION['id-user'])){}
     // }

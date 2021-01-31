@@ -164,15 +164,23 @@
             margin: 50px
         }
         .animated-ar img{
-            animation-name: signin;
-            animation-duration: 4s;
+            width: 450px
         }
-        @keyframes signin {
-            0%   {left:0px; top:0px;}
-            25%  {left:200px; top:0px;}
-            50%  {left:200px; top:200px;}
-            75%  {left:0px; top:200px;}
-            100% {left:0px; top:0px;}
+        .forgot-password .card{
+            margin-top: 0;
+        }
+        .forgot-password img{
+            width: 300px;
+            margin-left: 80px;
+            margin-top: 50px;
+        }
+        .verification img{
+            width: 450px;
+            margin-top: 100px;
+        }
+        .verification-success img{
+            width: 400px;
+            margin-top: 50px;
         }
         @media screen and (max-width: 640px){
             .landing-image{
@@ -211,6 +219,35 @@
             }
             .collapse-ar{
                 background: #1D1D1D;
+            }
+            .animated-ar img{
+                display: none;
+            }
+            .forgot-password img{
+                display: none;
+            }
+            .forgot-password .card{
+                margin-top: 100px;
+            }
+            .verification h1{
+                margin-left: -10px;
+                width: 110%;
+                margin-top: -5px;
+            }
+            .verification img{
+                width: 250px;
+                margin-top: 0;
+                margin-left: 50px;
+            }
+            .verification-success h1{
+                margin-left: -10px;
+                width: 110%;
+                margin-top: -5px;
+            }
+            .verification-success img{
+                width: 250px;
+                margin-top: 0;
+                margin-left: 50px;
             }
         }
     </style>

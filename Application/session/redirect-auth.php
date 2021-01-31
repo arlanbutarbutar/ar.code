@@ -51,7 +51,7 @@ if (isset($_SESSION['id-user'])) {
         exit;
     }
     if ($_SESSION['id-role'] == 13) {
-        header("Location: ../");
+        header("Location: ../../Views/");
         exit;
     }
     if ($_SESSION['id-role'] == 14) {

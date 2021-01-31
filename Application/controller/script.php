@@ -75,11 +75,34 @@ require_once("connect.php");require_once("functions.php");
         unset($_SESSION['view-location']);
         header("Location: ./");exit;
     }
-    if (isset($_SESSION['auth'])) {
-        if (isset($_POST['daftar'])) {
-            if (daftar($_POST) > 0) {
-                header('Location: verification');exit;
-            }
+    if(isset($_POST['mail-visitor'])){
+        if(contact($_POST)>0){
+            if(isset($_SESSION['message-danger'])){unset($_SESSION['message-danger']);}
+            header("Location: contact");exit;
+        }
+    }
+    if(isset($_POST['signin'])){
+        if(signin($_POST)>0){
+            header("Location: ../Application/session/redirect-auth.php");exit;
+        }
+    }
+    if(isset($_POST['signup'])){
+        if(signup($_POST)>0){
+            if(isset($_SESSION['mail-access'])||isset($_SESSION['mail-access'])){unset($_SESSION['mail-access']);unset($_SESSION['message-danger']);}
+            $encrypt_email=password_hash($_POST['email'], PASSWORD_DEFAULT);
+            header("Location: verification?auth=$encrypt_email");exit;
+        }
+    }
+    if(isset($_POST['forgot-password'])){
+        if(forgot_password($_POST)>0){
+            if(isset($_SESSION['message-danger'])){unset($_SESSION['message-danger']);}
+            header("Location: new-password");exit;
+        }
+    }
+    if(isset($_POST['new-password'])){
+        if(new_password($_POST)>0){
+            if(isset($_SESSION['message-danger'])){unset($_SESSION['message-danger']);}
+            header("Location: signin");exit;
         }
     }
 // == Private ==

@@ -1,1 +1,1 @@
-<?php header("Location: ../auth/toUser.php");exit;
+<?php header("Location: ../Application/session/redirect-auth.php");exit;

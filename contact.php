@@ -1,6 +1,6 @@
 <?php if (!isset($_SESSION)) {session_start();}
     if(isset($_SESSION['auth'])){unset($_SESSION['auth']);}
-    require_once("Application/session/redirect-user.php");
+    require_once("Application/session/redirect-visitor.php");
     require_once("Application/controller/script.php");
     $_SESSION['page-name']=" - Contact";
 ?>
