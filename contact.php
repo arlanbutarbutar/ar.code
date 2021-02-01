@@ -1,4 +1,5 @@
 <?php if (!isset($_SESSION)) {session_start();}
+    require_once("Application/session/cookie-auth.php");
     if(isset($_SESSION['auth'])){unset($_SESSION['auth']);}
     require_once("Application/session/redirect-visitor.php");
     require_once("Application/controller/script.php");

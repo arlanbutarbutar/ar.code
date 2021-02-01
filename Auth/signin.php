@@ -1,7 +1,8 @@
-<?php if (!isset($_SESSION)) {session_start();}
+<?php if (!isset($_SESSION)) {session_start();}$_SESSION['auth']=1;
+    require_once("../Application/session/cookie-auth.php");
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']=" - Sign In";$_SESSION['auth']=1;
+    $_SESSION['page-name']=" - Sign In";
 ?>
 
 <!-- == Sign In page == -->

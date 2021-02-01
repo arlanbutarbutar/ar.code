@@ -1,8 +1,9 @@
-<?php if (!isset($_SESSION)) {session_start();}
+<?php if (!isset($_SESSION)) {session_start();}$_SESSION['auth']=1;
+    require_once("../Application/session/cookie-auth.php");
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/controller/script.php");
     if(!isset($_GET['auth'])){header("Location: signup");exit;}
-    $_SESSION['page-name']=" - Verification";$_SESSION['auth']=1;
+    $_SESSION['page-name']=" - Verification";
 ?>
 
 <!-- == Verification page == -->
