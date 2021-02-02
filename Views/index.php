@@ -1,0 +1,1 @@
+<a href="../Application/controller/logout">logout</a>
