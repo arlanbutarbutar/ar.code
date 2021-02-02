@@ -303,7 +303,58 @@
                 color: #fff;
             }
         </style>
-    <?php } ?>
+    <?php } if(isset($_SESSION['id-user'])){if($_SESSION['id-role']==7){?>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <style>
+            .navbar-brand-ar img{
+                transform: none;
+                transition: 0.3s ease-in-out;
+            }
+            .navbar-brand-ar img:hover{
+                transform: scale(1.2) rotate(10deg);
+            }
+            .nav-link-ar{
+                color: #000;
+                transform: none;
+                font-weight: 600;
+                transition: 0.25s ease-in-out;
+            }
+            .nav-link-ar:hover{
+                font-weight: bold;
+                transform: scale(1.1);
+            }
+            .btn-primary-ar{
+                color: #fff;
+                background: #7BB402;
+                transform: none;
+                transition: 0.25s ease-in-out;
+                border-radius: 40px;
+            }
+            .btn-primary-ar:hover{
+                color: #1D1D1D;
+                background: #5F8C01;
+                transform: scale(1.1);
+                border-radius: 5px;
+            }
+            .navbar-toggler-ar{
+                color: #fff;
+                background: #9BDA15;
+                transform: none;
+                transition: 0.25s ease-in-out;
+            }
+            .navbar-toggler-ar:hover{
+                color: #1D1D1D;
+                background: #89C30D;
+                transform: scale(1.1);
+            }
+            .navbar-toggler-ar span{
+                color: #fff;
+            }
+        </style>
+    <?php }}?>
 <!-- == icons fontawesome == -->
     <link href="<?php if(isset($_SESSION['id-user']) || isset($_SESSION['auth'])){echo "../";}?>Assets/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 <!-- == other == -->

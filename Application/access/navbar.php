@@ -19,9 +19,17 @@
                 <li class="nav-item overflow-hidden">
                     <a class="nav-link text-light nav-link-ar text-center" href="<?php if(isset($_SESSION['auth'])){echo "../";}?>contact">Contact</a>
                 </li>
-                <li class="nav-item overflow-hidden bg-transparent rounded">
-                    <a href="<?php if(!isset($_SESSION['auth'])){echo "Auth/";}?>signin" class="btn btn-primary-ar my-2 my-sm-0 font-weight-bold">Sign In</a>
-                </li>
+                <?php if(!isset($_SESSION['id-user'])){?>
+                    <li class="nav-item overflow-hidden bg-transparent rounded">
+                        <a href="<?php if(!isset($_SESSION['auth'])){echo "Auth/";}?>signin" class="btn btn-primary-ar my-2 my-sm-0 font-weight-bold">Sign In</a>
+                    </li>
+                <?php }if(isset($_SESSION['id-user'])){?>
+                    <li class="nav-item overflow-hidden bg-transparent rounded">
+                        <form action="" method="POST" class="overflow-hidden">
+                            <button type="submit" name="logout-user" class="btn btn-primary-ar my-2 my-sm-0 font-weight-bold">Logout</button>
+                        </form>
+                    </li>
+                <?php }?>
             </ul>
         </div>
     </div>

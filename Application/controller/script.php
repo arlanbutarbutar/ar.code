@@ -78,6 +78,7 @@ require_once("connect.php");require_once("functions.php");
     if(isset($_POST['mail-visitor'])){
         if(contact($_POST)>0){
             if(isset($_SESSION['message-danger'])){unset($_SESSION['message-danger']);}
+            $_SESSION['message-success']="Your message has been sent successfully, we will reply as soon as possible.";
             header("Location: contact");exit;
         }
     }
@@ -106,3 +107,40 @@ require_once("connect.php");require_once("functions.php");
         }
     }
 // == Private ==
+    if(isset($_SESSION['id-user'])){
+        // => all roles
+            $logout='../Application/controller/logout';
+            $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $_SESSION['id-user']))));
+            $users_view_profile=mysqli_query($conn, "SELECT * FROM users WHERE id_user='$id_user'");
+        // => role selection
+            if($_SESSION['id-role']<=6){ // => all administrator | == Dashboard
+            }
+            if($_SESSION['id-role']==1 || $_SESSION['id-role']==2){ // => founder & developer app
+            }
+            if($_SESSION['id-role']==3){ // => administrasi
+            }
+            if($_SESSION['id-role']==4 || $_SESSION['id-role']==5){ // => teknisi & web dev/des
+            }
+            if($_SESSION['id-role']==6){ // => web client services
+            }
+            if($_SESSION['id-role']==7){ // => users
+                if(isset($_POST['view-location'])){
+                    $_SESSION['view-location']=1;
+                    header("Location: ./");exit;
+                }
+                if(isset($_POST['close-view-location'])){
+                    unset($_SESSION['view-location']);
+                    header("Location: ./");exit;
+                }
+                if(isset($_POST['mail-user'])){
+                    if(contact_user($_POST)>0){
+                        if(isset($_SESSION['message-danger'])){unset($_SESSION['message-danger']);}
+                        $_SESSION['message-success']="Your message has been sent successfully, we will reply as soon as possible.";
+                        header("Location: contact");exit;
+                    }
+                }
+                if(isset($_POST['logout-user'])){
+                    header("Location: ../Application/controller/logout");exit;
+                }
+            }
+    }

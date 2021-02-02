@@ -132,7 +132,41 @@
                 }
             }
         }
-    // == class Private =={
+    // == class Private ==
+        if(isset($_SESSION['id-user'])){
+            // => all roles
+                function contact_user($msg){global $conn; // == mail-access => 2/contact user
+                    $name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['name']))));
+                    $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['email']))));
+                    $pesan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['pesan']))));
+                    $_SESSION['mail-access']=2; require "mail-send.php";
+                    $to       = 'arlan270899@gmail.com';
+                    $subject  = 'Visitor Messages '.$name;
+                    $message  = '
+                        <div style="margin: 0; padding: 0;">
+                            <p>'.$email.' send the following message: '.$pesan.'</p>
+                        </div>
+                    ';
+                    smtp_mail($to, $subject, $message, '', '', 0, 0, true);
+                    return mysqli_affected_rows($conn);
+                }
+            // => role selection
+                if($_SESSION['id-role']<=6){ // => all administrator | == Dashboard
+                }
+                if($_SESSION['id-role']==1 || $_SESSION['id-role']==2){ // => founder & developer app
+                }
+                if($_SESSION['id-role']==3){ // => administrasi
+                }
+                if($_SESSION['id-role']==4 || $_SESSION['id-role']==5){ // => teknisi & web dev/des
+                }
+                if($_SESSION['id-role']==6){ // => web client services
+                }
+                if($_SESSION['id-role']==7){ // => users
+                }
+        }
+
+
+        // == data lama
         if(isset($_SESSION['id-employee'])){
             if(isset($_SESSION['id-role'])){
                 if($_SESSION['id-role']<13){

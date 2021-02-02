@@ -1,6 +1,6 @@
 <?php
 if(isset($_SESSION['mail-access'])){
-    if($_SESSION['mail-access']==1){
+    if($_SESSION['mail-access']==1 || $_SESSION['mail-access']==2){
         require "../Assets/vendor/phpmailer/PHPMailerAutoload.php";
     }
 }else{
