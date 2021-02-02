@@ -30,8 +30,7 @@ if (isset($_SESSION['id-user'])) {
         header("Location: ../../Views/");
         exit;
     }
-}
-if (!isset($_SESSION['id-user'])) {
-    header("Location: http://localhost/ar.code/");
+} else if (!isset($_SESSION['id-user'])) {
+    header("Location: ../../");
     exit;
 }

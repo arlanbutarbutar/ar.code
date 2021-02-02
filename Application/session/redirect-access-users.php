@@ -3,7 +3,7 @@
 }
 if (isset($_SESSION['id-access'])) {
     if ($_SESSION['id-access'] == 2) {
-        header("Location: ");
+        header("Location: ../Application/session/redirect-auth");
         exit;
     }
 }

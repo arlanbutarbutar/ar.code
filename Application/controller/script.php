@@ -109,6 +109,7 @@ require_once("connect.php");require_once("functions.php");
 // == Private ==
     if(isset($_SESSION['id-user'])){
         // => all roles
+            $color_black = 'style="color: #000"';
             $logout='../Application/controller/logout';
             $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $_SESSION['id-user']))));
             $users_view_profile=mysqli_query($conn, "SELECT * FROM users WHERE id_user='$id_user'");
