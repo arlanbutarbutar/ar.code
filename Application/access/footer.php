@@ -75,7 +75,7 @@
                 <footer class="sticky-footer bg-white">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto color-black">
-                            <span>Copyright &copy; UGD HP <?= date('Y') ?></span>
+                            <span <?= $color_black?>>Create with <span style="color: #e25555;">&#9829;</span> by Arlan Butar Butar | Copyright &copy; UGD HP <?= date('Y') ?></span>
                         </div>
                     </div>
                 </footer>
@@ -88,15 +88,15 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title color-black" id="exampleModalLabel">Are you sure you want to leave?</h5>
-                        <button class="close color-black" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
+                        <h5 class="modal-title" <?= $color_black?> id="exampleModalLabel">Are you sure you want to leave?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" <?= $color_black?>>×</span>
                         </button>
                     </div>
-                    <div class="modal-body color-black">Select "Logout" if you are sure you want to end this session.</div>
+                    <div class="modal-body" <?= $color_black?>>Select "Logout" if you are sure you want to end this session.</div>
                     <div class="modal-footer">
-                        <button class="btn btn-light btn-sm shadow card-scale color-black mr-2" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn black-jack btn-sm shadow text-light card-scale" href="../Application/controller/logout">Logout</a>
+                        <button class="btn btn-light btn-sm shadow card-scale mr-2" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn black-jack btn-sm shadow card-scale" <?= $bg_black?> href="../Application/controller/logout">Logout</a>
                     </div>
                 </div>
             </div>
@@ -124,6 +124,7 @@
         <script src="../Assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="../Assets/vendor/jquery-easing/jquery.easing.min.js"></script>
         <script src="../Assets/js/sb-admin-2.min.js"></script>
+        <script src="../Assets/js/register.js"></script>
         <script src="../Assets/vendor/chart.js/Chart.min.js"></script>
         <script>
             Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
@@ -132,21 +133,18 @@
             var myPieChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ["Developer", "Designer", "Code Reviewer"],
+                    labels: ["Developer", "Designer", "Code Reviewer", "Not Available"],
                     datasets: [{
-                        data: [75, 50, 65],
-                        backgroundColor: ['#E50909', '#E3DF0A', '#0A8BE2', ],
-                        hoverBackgroundColor: ['#D10707', '#C2BF0B', '#0978C3'],
-                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                        data: [<?= $row_cal_handphone?>, <?= $row_cal_laptop?>, <?= $row_cal_website?>, <?= $row_cal_available?>],
+                        backgroundColor: ['#55CE12', '#12CE8B', '#1255CE', '#A3C813'],
+                        hoverBackgroundColor: ['#48AE10', '#09AB71', '#0A3A91', '#85A40C'],
                     }],
                 },
                 options: {
                     maintainAspectRatio: false,
                     tooltips: {
-                        backgroundColor: "rgb(38,38,38)",
-                        bodyFontColor: "#262626",
-                        borderColor: '#232323',
-                        borderWidth: 1,
+                        backgroundColor: "#323232",
+                        bodyFontColor: "#FFFFFF",
                         xPadding: 15,
                         yPadding: 15,
                         displayColors: false,
@@ -158,6 +156,167 @@
                     cutoutPercentage: 80,
                 },
             });
+            
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                    $(this).remove();
+                });
+            }, 15000)
+            
+            $('.custom-file-input').on('change', function(){
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            });
+
+            AOS.init({
+                // offset: 100,
+                duration: 1000,
+                throttleDelay: 99
+            });
+            
+            $(window).on("load resize ", function() {
+                var scrollWidth = $('.tbl-content').width() - $('.tbl-content table').width();
+                $('.tbl-header').css({'padding-right':scrollWidth});
+            }).resize();
+
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
+
+            $('#exampleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var recipient = button.data('whatever')
+            var modal = $(this)
+            modal.find('.modal-title').text('New message to ' + recipient)
+            modal.find('.modal-body input').val(recipient)
+            })
+            
+            // function printDiv(elementId) {
+            //     var a = document.getElementById('printing-css').value;
+            //     var b = document.getElementById(elementId).innerHTML;
+            //     window.frames["print_frame"].document.title = document.title;
+            //     window.frames["print_frame"].document.body.innerHTML = '<style>' + a + '</style>' + b;
+            //     window.frames["print_frame"].window.focus();
+            //     window.frames["print_frame"].window.print();
+            // }
+            
+            // $(document).ready(function(){
+            //     $('#keyword-nota-tinggal').on('keyup',function(){
+            //         $.get('search/nota-tinggal.php?keyword-nota-tinggal='+$('#keyword-nota-tinggal').val(),function(data){
+            //             $('#container-nota-tinggal').html(data);
+            //         });
+            //     });
+            // });
+
+            // $(document).ready(function(){
+            //     $('#keyword-nota-cancel').on('keyup',function(){
+            //         $.get('search/nota-cancel.php?keyword-nota-cancel='+$('#keyword-nota-cancel').val(),function(data){
+            //             $('#container-nota-cancel').html(data);
+            //         });
+            //     });
+            // });
+
+            // $(document).ready(function(){
+            //     $('#keyword-nota-lunas').on('keyup',function(){
+            //         $.get('search/nota-lunas.php?keyword-nota-lunas='+$('#keyword-nota-lunas').val(),function(data){
+            //             $('#container-nota-lunas').html(data);
+            //         });
+            //     });
+            // });
+                
+            // $(document).ready(function(){
+            //     $('#keyword-nota-dp').on('keyup',function(){
+            //         $.get('search/report-dp.php?keyword-nota-dp='+$('#keyword-nota-dp').val(),function(data){
+            //             $('#container-nota-dp').html(data);
+            //         });
+            //     });
+            // });
+
+            // $(document).ready(function(){
+            //     $('#keyword-nota').on('keyup',function(){
+            //         $.get('search/report-day.php?keyword-nota='+$('#keyword-nota').val(),function(data){
+            //             $('#container-nota').html(data);
+            //         });
+            //     });
+            // });
+            
+            // $(document).ready(function(){
+            //     $('#keyword-laporan-pengeluaran').on('keyup',function(){
+            //         $.get('search/report-expense.php?keyword-laporan-pengeluaran='+$('#keyword-laporan-pengeluaran').val(),function(data){
+            //             $('#container-laporan-pengeluaran').html(data);
+            //         });
+            //     });
+            // });
+
+            // $(document).ready(function(){
+            //     $('#keyword-sparepart').on('keyup',function(){
+            //         $.get('search/report-spareparts.php?keyword-sparepart='+$('#keyword-sparepart').val(),function(data){
+            //             $('#container-sparepart').html(data);
+            //         });
+            //     });
+            // });
+            
+            // const searchForm = document.querySelector('#search-app');
+            // const searchFormInput = searchForm.querySelector('input');
+            // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            // if(SpeechRecognition) {
+            //     console.log("Your browser supports speech Recognition");
+            //     searchForm.insertAdjacentHTML("beforeend", "<input class='form-control col-11 mr-2 text-center' type='text' name='q' id='search-engine' placeholder='Cari Provinsi...' aria-label='Search'><button class='btn btn-outline-success border-0 my-2 my-sm-0' id='talk' type='button'><i class='fas fa-microphone'></i></button>");
+            //     const micBtn = searchForm.querySelector('button');
+            //     const micIcon = micBtn.querySelector('i');
+
+            //     const recognition = new SpeechRecognition();
+            //     recognition.continuous = true;
+            //     recognition.lang = "id"; // lang
+            //     micBtn.addEventListener("click", micBtnClick);
+            //     function micBtnClick() {
+            //         if(micIcon.classList.contains("fa-microphone")){
+            //             recognition.start();
+            //         }else{
+            //             recognition.stop();
+            //         }
+            //     }
+            //     recognition.addEventListener("start", startSpeechRecognition);
+            //     function startSpeechRecognition(){
+            //         micIcon.classList.remove("fa-microphone");
+            //         micIcon.classList.add("fa-microphone-slash");
+            //         searchFormInput.focus();
+            //         console.log("Speech Recognition Active");
+            //     }
+            //     recognition.addEventListener("end", endSpeechRecognition);
+            //     function endSpeechRecognition(){
+            //         micIcon.classList.remove("fa-microphone-slash");
+            //         micIcon.classList.add("fa-microphone");
+            //         searchFormInput.focus();
+            //         console.log("Speech Recognition Disconnected");
+            //     }
+            //     recognition.addEventListener("result", resultOfSpeechRecognition);
+            //     function resultOfSpeechRecognition(event){
+            //         const currentResultIndex = event.resultIndex;
+            //         const transcript = event.results[currentResultIndex][0].transcript;
+            //         if(transcript.toLowerCase().trim()==="stop"){
+            //             recognition.stop();
+            //         }else if(!searchFormInput.value){
+            //             searchFormInput.value = transcript;
+            //         }else{ 
+            //             if(transcript.toLowerCase().trim()==="go"){
+            //                 searchForm.submit();
+            //             }else if(transcript.toLowerCase().trim()==="reset"){
+            //                 searchFormInput.value = "";
+            //             }else{
+            //                 searchFormInput.value = transcript;
+            //             }
+            //         }
+                    // aksi beda
+                    // setTimeout(() => {
+                    //     searchForm.submit();
+                    // }, 750);
+                    // ===========
+            //     }
+            // }else{
+            //     console.log("Your browser does not supports speech Recognition");
+            //     searchForm.insertAdjacentHTML("beforeend", "<input class='form-control col-12 text-center' type='text' name='q' id='search-engine' placeholder='Cari Provinsi...' aria-label='Search'>");
+            // }
         </script>
     <?php }}?>
 <!-- == other == -->

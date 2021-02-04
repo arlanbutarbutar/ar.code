@@ -28,7 +28,7 @@
                         if(isset($_SESSION['message-danger'])||isset($_SESSION['message-success'])){unset($_SESSION['message-danger']);unset($_SESSION['message-success']);}
                         if(isset($_SESSION['auth'])){unset($_SESSION['auth']);}
                         $_SESSION['id-user']=$row['id_user'];
-                        $_SESSION['id-log']=$row['id_log'];
+                        $_SESSION['id-log']=$row['id_user'];
                         $_SESSION['is-active']=$row['is_active'];
                         $_SESSION['id-access']=$row['id_access'];
                         $_SESSION['id-role']=$row['id_role'];
@@ -135,6 +135,7 @@
     // == class Private ==
         if(isset($_SESSION['id-user'])){
             // => all roles
+                $link_log="http://localhost/arcode/views/";
                 function contact_user($msg){global $conn; // == mail-access => 2/contact user
                     $name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['name']))));
                     $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $msg['email']))));
@@ -150,10 +151,168 @@
                     smtp_mail($to, $subject, $message, '', '', 0, 0, true);
                     return mysqli_affected_rows($conn);
                 }
+                function photo_profile($data){global $conn,$time;
+                    $id_user=addslashes(trim($data['id-user']));
+                    $img=file_photo_user($id_user);
+                    if(!$img){return false;}
+                    $img_old=$data['img-old'];
+                    if($img_old!='default.png'){unlink('../Assets/img/img-users/'.$img_old);}
+                    $id_log=$_SESSION['id-log'];
+                    $log="Mengubah foto profile.";
+                    $date=date('l, d M Y');
+                    mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                    mysqli_query($conn, "UPDATE users SET img='$img' WHERE id_user='$id_user'");
+                    return mysqli_affected_rows($conn);
+                }
+                function file_photo_user(){
+                    $namaFile=$_FILES["profile"]["name"];
+                    $ukuranFile=$_FILES["profile"]["size"];
+                    $error=$_FILES["profile"]["error"];
+                    $tmpName=$_FILES["profile"]["tmp_name"];
+                    if($error===4){
+                        $_SESSION['message-danger']="Pilih gambar profil kamu terlebih dahulu!";
+                        header("Location: ../Views/profile");
+                        return false;
+                    }
+                    $ekstensiGambarValid=['jpg','jpeg','png'];
+                    $ekstensiGambar=explode('.',$namaFile);
+                    $ekstensiGambar=strtolower(end($ekstensiGambar));
+                    if(!in_array($ekstensiGambar,$ekstensiGambarValid)){
+                        $_SESSION['message-danger']="Maaf, file kamu bukan gambar!";
+                        header("Location: ../Views/profile");
+                        return false;
+                    }
+                    if($ukuranFile>2000000){
+                        $_SESSION['message-danger']="Maaf, ukuran gambar terlalu besar! (2MB)";
+                        header("Location: ../Views/profile");
+                        return false;
+                    }
+                    $namaFile_encrypt=crc32($namaFile);
+                    $encrypt=$namaFile_encrypt.".jpg";
+                    move_uploaded_file($tmpName,'../Assets/img/img-users/'.$encrypt);
+                    return $encrypt;
+                }
+                function email_profile($data){global $conn,$time;
+                    $id_user=addslashes(trim($data['id-user']));
+                    $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email']))));
+                    $email_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email-old']))));
+                    $password1=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password1']))));
+                    $password2=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password2']))));
+                    if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+                        $_SESSION['message-danger']="Email yang kamu masukan tidak sesuai.";
+                        header("Location: profile");return false;
+                    }
+                    if($email==$email_old){
+                        $_SESSION['message-danger']="Email yang kamu masukan sama dengan email lama kamu.";
+                        header("Location: profile");return false;
+                    }
+                    if($password1!=$password2){
+                        $_SESSION['message-danger']="Password yang kamu masukan tidak sama.";
+                        header("Location: profile");return false;
+                    }
+                    $check_lenght_pass=strlen($password1);
+                    if($check_lenght_pass<=8){
+                        $_SESSION['message-danger']="Password yang kamu masukan terlalu pendek (Min: 8)!";
+                        header("Location: profile");return false;
+                    }
+                    $check_users=mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+                    if(mysqli_num_rows($check_users)>0){
+                        $_SESSION['message-danger']='Email yang ingin kamu ubah: '. $email .' sudah ada atau telah dipakai!';
+                        header("Location: profile");return false;
+                    }else if(mysqli_num_rows($check_users)==0){
+                        $id_log=$_SESSION['id-log'];
+                        $log="Ubah email dari ".$email_old." menjadi email baru ".$email.".";
+                        $date=date('l, d M Y');
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE users SET email='$email' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                }
+                function biodata_profile($data){global $conn,$time;
+                    $id_user=addslashes(trim($data['id-user']));
+                    $first_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['first-name']))));
+                    $last_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['last-name']))));
+                    $phone=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['phone']))));
+                    $address=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['address']))));
+                    $postal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['postal']))));
+                    $id_log=$_SESSION['id-log'];
+                    $log="Ubah biodata diri menjadi ".$first_name." ".$last_name.", nomor handphone ".$phone.", alamat ".$address.", kode pos ".$postal.".";
+                    $date=date('l, d M Y');
+                    mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                    mysqli_query($conn, "UPDATE users SET first_name='$first_name', last_name='$last_name', phone='$phone', address='$address', postal='$postal' WHERE id_user='$id_user'");
+                    return mysqli_affected_rows($conn);
+                }
+                function password_profile($data){global $conn, $time;
+                    $id_user=addslashes(trim($data['id-user']));
+                    $password1=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password1']))));
+                    $password2=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password2']))));
+                    $password_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password-old']))));
+                    if(password_verify($password1, $password_old)){
+                        $_SESSION['message-danger']="Password yang kamu masukan sama dengan password lama.";
+                        header("Location: profile-settings");return false;
+                    }
+                    if($password1!=$password2){
+                        $_SESSION['message-danger']="Password yang kamu masukan tidak sama.";
+                        header("Location: profile-settings");return false;
+                    }
+                    $check_lenght_pass=strlen($password1);
+                    if($check_lenght_pass<=8){
+                        $_SESSION['message-danger']="Password yang kamu masukan terlalu pendek (Min: 8)!";
+                        header("Location: profile-settings");return false;
+                    }
+                    $date=date('Y-m-d');
+                    $password=password_hash($password1, PASSWORD_DEFAULT);
+                    $id_log=$_SESSION['id-log'];
+                    $log="telah mengubah password pada tanggal".$date;
+                    $date=date('l, d M Y');
+                    mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                    mysqli_query($conn, "UPDATE users SET password='$password' WHERE id_user='$id_user'");
+                    return mysqli_affected_rows($conn);
+                }
+                function help_message($data){global $conn, $time;
+                    $id_user=$_SESSION['id-user'];
+                    $help_message=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['help-message']))));
+                    $tgl_cari=date('Y-m-d');
+                    $id_log=$_SESSION['id-log'];
+                    $log="Mengirimkan pesan help kepada Client Service UGD HP";
+                    $date=date('l, d M Y');
+                    mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                    mysqli_query($conn, "INSERT INTO users_help(id_user,help_message,date,tgl_cari) VALUES('$id_user','$help_message','$date','$tgl_cari')");
+                    return mysqli_affected_rows($conn);
+                }
             // => role selection
                 if($_SESSION['id-role']<=6){ // => all administrator | == Dashboard
                 }
                 if($_SESSION['id-role']==1 || $_SESSION['id-role']==2){ // => founder & developer app
+                    function help_answer_message($data){global $conn, $time;
+                        $id_help=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-help']))));
+                        $answer=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['answer']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Membalas help dengan id help #".$id_help;
+                        $date=date('l, d M Y');
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE users_help SET answer='$answer' WHERE id_help='$id_help'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function report_problem($data){global $conn, $time;
+                        $problem_message=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['problem-message']))));
+                        $tgl_cari=date('Y-m-d');
+                        $id_log=$_SESSION['id-log'];
+                        $log="Menambahkan report a problem: ".$problem_message;
+                        $date=date('l, d M Y');
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "INSERT INTO report_problem(problem_message,date,tgl_cari) VALUES('$problem_message','$date','$tgl_cari')");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function menu($data){global $conn, $time;
+                        $menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['menu']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Menambahkan menu menejemen baru";
+                        $date=date('l, d M Y');
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "INSERT INTO menu(menu) VALUES('$menu')");
+                        return mysqli_affected_rows($conn);
+                    }
                 }
                 if($_SESSION['id-role']==3){ // => administrasi
                 }
@@ -170,110 +329,9 @@
         if(isset($_SESSION['id-employee'])){
             if(isset($_SESSION['id-role'])){
                 if($_SESSION['id-role']<13){
-                    $akses_hp=202027;$akses_laptop=202028;
-                    $link_log="http://localhost/arcode/views/";
-                    function web_access(){global $conn;
-                        $web_access=mysqli_query($conn, "SELECT * FROM web_access");
-                        $row_web_access=mysqli_fetch_assoc($web_access);
-                        $id_web_access=$row_web_access['id_web_access'];
-                        $is_active=$row_web_access['is_active'];
-                        if($is_active==1){
-                            $_SESSION['aksi']="Server administrasi UGD HP telah ditutup!";
-                            $is_active_new=2;
-                            mysqli_query($conn, "UPDATE web_access SET is_active='$is_active_new' WHERE id_web_access='$id_web_access'");
-                            return mysqli_affected_rows($conn);
-                        }else if($is_active==2){
-                            $_SESSION['aksi']="Server administrasi UGD HP telah dibuka!";
-                            $is_active_new=1;
-                            mysqli_query($conn, "UPDATE web_access SET is_active='$is_active_new' WHERE id_web_access='$id_web_access'");
-                            return mysqli_affected_rows($conn);
-                        }
-                    }
-                    function edit_profile_employee($edit){global $conn,$time;
-                        $id_employee=addslashes(trim($edit['id-employee']));
-                        $img=upload_photo_employee($id_employee);
-                        if(!$img){
-                            return false;
-                        }
-                        $img_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['img-old']))));
-                        if(!empty($img_old)){
-                            unlink('../assets/img/img-employee/'.$img_old);
-                        }
-                        $id_log=$_SESSION['id-log'];
-                        $log="Ubah foto profile.";
-                        $date=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log VALUES('$id_log','$log','$date','$time')");
-                        mysqli_query($conn, "UPDATE employee SET img='$img' WHERE id_employee='$id_employee'");
-                        return mysqli_affected_rows($conn);
-                    }
-                    function upload_photo_employee($id_employee){global $conn;
-                        $namaFile=$_FILES["gambar"]["name"];
-                        $ukuranFile=$_FILES["gambar"]["size"];
-                        $error=$_FILES["gambar"]["error"];
-                        $tmpName=$_FILES["gambar"]["tmp_name"];
-                        if($error===4){
-                            $_SESSION['message-danger']="Pilih gambar profil Anda!";
-                            header("Location: ../views/profile");
-                            return false;
-                        }
-                        $ekstensiGambarValid=['jpg','jpeg','png'];
-                        $ekstensiGambar=explode('.',$namaFile);
-                        $ekstensiGambar=strtolower(end($ekstensiGambar));
-                        if(!in_array($ekstensiGambar,$ekstensiGambarValid)){
-                            $_SESSION['message-danger']="Maaf, bukan gambar!";
-                            header("Location: ../views/profile");
-                            return false;
-                        }
-                        if($ukuranFile>2000000){
-                            $_SESSION['message-danger']="Maaf, ukuran gambar terlalu besar! (2MB)";
-                            header("Location: ../views/profile");
-                            return false;
-                        }
-                        $scripting=htmlspecialchars(addslashes(trim(mysqli_escape_string($conn, $namaFile))));
-                        $hashPhoto=md5($scripting);
-                        $verifyPhoto=$id_employee.$hashPhoto.".jpg";
-                        move_uploaded_file($tmpName,'../assets/img/img-employee/'.$verifyPhoto);
-                        return $verifyPhoto;
-                    }
-                    function edit_email_employee($edit){global $conn,$time;
-                        $id_employee=addslashes(trim($edit['id-employee']));
-                        $id_employee_hash=password_hash($id_employee, PASSWORD_DEFAULT);
-                        $first_name=addslashes(trim($edit['first-name']));
-                        $email_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['email-old']))));
-                        $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['email']))));
-                        $cek_users=mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-                        if(mysqli_num_rows($cek_users)>0){
-                            $_SESSION['message-danger']='Maaf, akun yang ingin anda ubah: '. $email .' sudah ada atau telah dipakai!';
-                            header("Location: profile");
-                            return false;
-                        }else if(mysqli_num_rows($cek_users)==0){
-                            $cek_employee=mysqli_query($conn, "SELECT * FROM employee WHERE email='$email'");
-                            if(mysqli_num_rows($cek_employee)>0){
-                                $_SESSION['message-danger']='Maaf, akun yang ingin anda ubah: '. $email .' sudah ada atau telah dipakai!';
-                                header("Location: profile");
-                                return false;
-                            }
-                        }
-                        $is_active=2;
-                        require "mail-send.php";
-                        $to       = $email;
-                        $subject  = 'Verification Service Netmedia Framecode';
-                        $message  = '
-                            <div style="margin: 0; padding: 0;">
-                                <p>Silakan klik link di bawah ini untuk verifikasi ulang akun anda:</p><br>
-                                <a href="https://www.ugdhp.com/auth/verification-success?u='.$id_employee_hash.'&c='.$id_employee.'" style="font-weight: bold">'.$id_employee_hash.'</a>
-                                <p>Kode ini bersifat rahasia jangan berikan kepada siapapun itu. Baca juga peraturan kebijakan layanan kami di
-                                    <a href="https://www.ugdhp.com/terms-conditions" style="text-decoration: none;">disini</a>
-                                </p>
-                            </div>';
-                        smtp_mail($to, $subject, $message, '', '', 0, 0, true);
-                        $id_log=$_SESSION['id-log'];
-                        $log="Ubah email dari ".$email_old." menjadi email baru ".$email.".";
-                        $date=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log VALUES('$id_log','$log','$date','$time')");
-                        mysqli_query($conn, "UPDATE employee SET email='$email', is_active='$is_active' WHERE id_employee='$id_employee'");
-                        return mysqli_affected_rows($conn);
-                    }
+                    
+                    
+                    
                     function edit_data_employee($edit){global $conn,$time;
                         $id_employee=addslashes(trim($edit['id-employee']));
                         $first_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['first-name']))));
