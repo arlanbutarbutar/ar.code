@@ -1,4 +1,4 @@
-<ul class="navbar-nav bg-gradient-white sidebar sidebar-light accordion shadow-sm toggled" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-white sidebar sidebar-light accordion shadow-sm toggled" id="accordionSidebar" style="overflow-y: auto; overflow-x:hidden; height: 200px;">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard">
         <div class="sidebar-brand-icon">
             <i class="fas fa-server" <?= $color_black?>></i>

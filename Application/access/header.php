@@ -21,7 +21,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Montserrat&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sedgwick+Ave&family=Zilla+Slab+Highlight&display=swap" rel="stylesheet">
 <!-- == style css == -->
-    <link href="<?php if(isset($_SESSION['id-user']) || isset($_SESSION['auth'])){echo "../";}?>Assets/css/scroll.css" rel="stylesheet">
+    <link href="<?php if(isset($_SESSION['id-user']) || isset($_SESSION['auth'])){echo "../";}?>Assets/css/scrollx.css" rel="stylesheet">
     <?php if(!isset($_SESSION['id-user'])){?>
         <style>
             *{overflow-x: hidden;}
@@ -93,6 +93,10 @@
             <style>
                 .card-scale{transform: none;transition: 0.25s ease-in-out;}
                 .card-scale:hover{transform: scale(1.1);}
+                /* .tableFixHead { overflow-y: auto; height: 100px; }
+                table  { border-collapse: collapse; width: 100%; }
+                th, td { padding: 8px 16px; }
+                th     { background:#eee; } */
             </style>
         <?php }else if($_SESSION['id-role']==7){?>
             <style>
@@ -125,7 +129,6 @@
         <link href="https://fonts.googleapis.com/css2?family=Lato:ital@1&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
         <link href="../Assets/css/sb-admin-2.min.css" rel="stylesheet">
-        <link href="../Assets/css/scroll.css" rel="stylesheet">
         <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

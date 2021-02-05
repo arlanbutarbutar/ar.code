@@ -46,11 +46,11 @@
                                                     </form>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-8 mt-3" style="overflow-x: auto">
-                                                <div class="card card-body shadow border-0">
+                                            <div class="col-lg-8 mt-3 mb-5">
+                                                <div class="card card-body shadow border-0" style="overflow-x: auto">
                                                     <table class="table table-sm text-center" <?= $color_black?>>
                                                         <thead>
-                                                            <tr>
+                                                            <tr style="border-top:hidden">
                                                                 <th scope="col">#</th>
                                                                 <th scope="col">Menu</th>
                                                                 <th colspan="2">Aksi</th>
@@ -59,18 +59,60 @@
                                                         <tbody>
                                                             <?php $no=1; if(mysqli_num_rows($menus)==0){?>
                                                                 <tr>
-                                                                    <th colspan="3">Belum ada menu</th>
+                                                                    <th colspan="4">Belum ada menu</th>
                                                                 </tr>
-                                                            <?php }else if(mysqli_num_rows($menus)>0){while($row=mysqli_fetch_assoc($menus)){var_dump($row);?>
+                                                            <?php }else if(mysqli_num_rows($menus)>0){while($row=mysqli_fetch_assoc($menus)){$_SESSION['id-menu']=$row['id_menu'];$menu_old=$row['menu'];?>
                                                                 <tr>
                                                                     <th scope="row"><?= $no?></th>
                                                                     <td><?= $row['menu']?></td>
-                                                                    <td>Ubah</td>
-                                                                    <td>Hapus</td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-warning btn-sm shadow dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-pen"></i> Ubah
+                                                                        </button>
+                                                                        <div class="dropdown-menu p-2 border-0 shadow text-center">
+                                                                            <form action="" method="POST">
+                                                                                <input type="hidden" name="id-menu" value="<?= $row['id_menu']?>">
+                                                                                <input type="hidden" name="menu-old" value="<?= $row['menu']?>">
+                                                                                <div class='form-group'>
+                                                                                    <input type="text" name="menu" value="<?= $row['menu']?>" placeholder="Ubah nama menu" class="form-control text-center" required>
+                                                                                </div>
+                                                                                <div class='form-group'>
+                                                                                    <button type="submit" name="ubah-menu" class="btn btn-sm shadow" <?= $bg_black?>>Apply</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td><form action="" method="POST">
+                                                                        <input type="hidden" name="id-menu" value="<?= $row['id_menu']?>">
+                                                                        <input type="hidden" name="menu-old" value="<?= $row['menu']?>">
+                                                                        <button type="submit" name="hapus-menu" class="btn btn-danger btn-sm shadow"><i class="fas fa-trash"></i> Hapus</button>
+                                                                    </form></td>
                                                                 </tr>
                                                             <?php $no++;}}?>
                                                         </tbody>
                                                     </table>
+                                                    <nav class="small" aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-center">
+                                                            <?php if(isset($page1)){if(isset($total_page1)){if($page1>1):?>
+                                                            <li class="page-item shadow">
+                                                                <a class="page-link border-0" <?= $bg_black?> href="menu?page=<?= $page1-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
+                                                            </li>
+                                                            <?php endif;?>
+                                                            <?php for($i=1; $i<=$total_page1; $i++):?>
+                                                                <?php if($i<=5):?>
+                                                                    <?php if($i==$page1):?>
+                                                                        <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="menu?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                    <?php else :?>
+                                                                        <li class="page-item shadow"><a class="page-link border-0" href="menu?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                    <?php endif;?>
+                                                                <?php endif;?>
+                                                            <?php endfor;?>
+                                                            <?php if($page1<$total_page1):?>
+                                                            <li class="page-item shadow">
+                                                                <a class="page-link border-0" <?= $bg_black?> href="menu?page=<?= $page1+1;?>">Next</a>
+                                                            </li>
+                                                            <?php endif;}}?>
+                                                        </ul>
+                                                    </nav>
                                                 </div>
                                             </div>
                                         </div>

@@ -177,7 +177,7 @@ require_once("connect.php");require_once("functions.php");
                 }
                 $report_problem=mysqli_query($conn, "SELECT * FROM report_problem");
             }
-            if($_SESSION['id-role']==1 || $_SESSION['id-role']==2){ // => founder & developer app
+            if($_SESSION['id-role']<=2){ // => founder & developer app
                 $help_message_admin=mysqli_query($conn, "SELECT * FROM users_help ORDER BY id_help DESC");
                 if(isset($_POST['help-admin'])){
                     if(help_answer_message($_POST)>0){
@@ -191,19 +191,192 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: report-problem");exit;
                     }
                 }
+                $data1=25;
+                $result1=mysqli_query($conn, "SELECT * FROM menu");
+                $total1=mysqli_num_rows($result1);
+                $total_page1=ceil($total1/$data1);
+                $page1=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data1=($data1*$page1)-$data1;
                 $menus=mysqli_query($conn, "SELECT * FROM menu");
+                $menus_edit=mysqli_query($conn, "SELECT * FROM menu LIMIT $awal_data1, $data1");
                 if(isset($_POST['submit-menu'])){
                     if(menu($_POST)>0){
                         $_SESSION['message-success']="Menu baru telah ditambahkan.";
                         header("Location: menu");exit;
                     }
                 }
+                if(isset($_POST['ubah-menu'])){
+                    if(edit_menu($_POST)>0){
+                        $_SESSION['message-success']="Menu telah berhasil diubah.";
+                        header("Location: menu");exit;
+                    }
+                }
+                if(isset($_POST['hapus-menu'])){
+                    if(delete_menu($_POST)>0){
+                        $_SESSION['message-success']="Yah menunya udah dihapus, semoga ada menu yang lebih baik :).";
+                        header("Location: menu");exit;
+                    }
+                }
+                $menu_status_insert=mysqli_query($conn, "SELECT * FROM menu_status");
+                $menu_status_edit=mysqli_query($conn, "SELECT * FROM menu_status");
+                $data2=25;
+                $result2=mysqli_query($conn, "SELECT * FROM menu_sub");
+                $total2=mysqli_num_rows($result2);
+                $total_page2=ceil($total2/$data2);
+                $page2=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data2=($data2*$page2)-$data2;
+                $menu_sub=mysqli_query($conn, "SELECT * FROM menu_sub JOIN menu ON menu_sub.id_menu=menu.id_menu JOIN menu_status ON menu_sub.is_active=menu_status.id_status LIMIT $awal_data2, $data2");
+                if(isset($_POST['submit-sub-menu'])){
+                    if(sub_menu($_POST)>0){
+                        $_SESSION['message-success']="Sub Menu baru telah ditambahkan.";
+                        header("Location: sub-menu");exit;
+                    }
+                }
+                if(isset($_POST['edit-sub-menu'])){
+                    if(edit_sub_menu($_POST)>0){
+                        $_SESSION['message-success']="Sub Menu berhasil diubah.";
+                        header("Location: sub-menu");exit;
+                    }
+                }
+                if(isset($_POST['delete-sub-menu'])){
+                    if(delete_sub_menu($_POST)>0){
+                        $_SESSION['message-success']="Yah sub menunya hilang, mungkin ada sub menu yang lebih menarik lainnya :).";
+                        header("Location: sub-menu");exit;
+                    }
+                }
+                $data3=25;
+                $result3=mysqli_query($conn, "SELECT * FROM menu_access");
+                $total3=mysqli_num_rows($result3);
+                $total_page3=ceil($total3/$data3);
+                $page3=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data3=($data3*$page3)-$data3;
+                $menu_access=mysqli_query($conn, "SELECT * FROM menu_access JOIN users_role ON menu_access.role_id=users_role.id_role JOIN menu ON menu_access.id_menu=menu.id_menu LIMIT $awal_data3, $data3");
+                $users_roles=mysqli_query($conn, "SELECT * FROM users_role WHERE id_role<=6");
+                if(isset($_POST['submit-access-menu'])){
+                    if(access_menu($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menambahkan hak akses menu.";
+                        header("Location: access-menu");exit;
+                    }
+                }
+                if(isset($_POST['hapus-access-menu'])){
+                    if(delete_access_menu($_POST)>0){
+                        $_SESSION['message-success']="Yah hak akses menunya hilang, mungkin ada kesempatan hak akses untuk role lainnya :).";
+                        header("Location: access-menu");exit;
+                    }
+                }
+                $data4=25;
+                $result4=mysqli_query($conn, "SELECT * FROM menu_sub_access");
+                $total4=mysqli_num_rows($result4);
+                $total_page4=ceil($total4/$data4);
+                $page4=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data4=($data4*$page4)-$data4;
+                $menu_sub_access=mysqli_query($conn, "SELECT * FROM menu_sub_access JOIN users_role ON menu_sub_access.role_id=users_role.id_role JOIN menu_sub ON menu_sub_access.id_sub_menu=menu_sub.id_sub_menu LIMIT $awal_data4, $data4");
+                if(isset($_POST['submit-access-sub-menu'])){
+                    if(access_sub_menu($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menambahkan hak akses sub menu.";
+                        header("Location: access-sub-menu");exit;
+                    }
+                }
+                if(isset($_POST['hapus-access-sub-menu'])){
+                    if(delete_access_sub_menu($_POST)>0){
+                        $_SESSION['message-success']="Yah hak akses sub menunya hilang, mungkin ada kesempatan hak akses untuk role lainnya :).";
+                        header("Location: access-sub-menu");exit;
+                    }
+                }
+                $privacy_policy=mysqli_query($conn, "SELECT * FROM privacy_policy");
+                if(isset($_POST['submit-privacy'])){
+                    if(privacy_policy($_POST)>0){
+                        $_SESSION['message-success']="Kebikajan privasi telah anda tambahkan.";
+                        header("Location: privacy-policy");exit;
+                    }
+                }
+                if(isset($_POST['edit-privacy'])){
+                    if(edit_privacy_policy($_POST)>0){
+                        $_SESSION['message-success']="Kebikajan privasi telah anda edit.";
+                        header("Location: privacy-policy");exit;
+                    }
+                }
+                if(isset($_POST['delete-privacy'])){
+                    if(delete_privacy_policy($_POST)>0){
+                        $_SESSION['message-success']="Yah... kebikajan privasi sudah dihapus, silakan masukan kebijakan yang baru ya :).";
+                        header("Location: privacy-policy");exit;
+                    }
+                }
+                $term_of_service=mysqli_query($conn, "SELECT * FROM term_of_service");
+                if(isset($_POST['submit-term'])){
+                    if(term_of_service($_POST)>0){
+                        $_SESSION['message-success']="Persyaratan layanan telah anda tambahkan.";
+                        header("Location: term-of-service");exit;
+                    }
+                }
+                if(isset($_POST['edit-term'])){
+                    if(edit_term_of_service($_POST)>0){
+                        $_SESSION['message-success']="Persyaratan layanan telah anda edit.";
+                        header("Location: term-of-service");exit;
+                    }
+                }
+                if(isset($_POST['delete-term'])){
+                    if(delete_term_of_service($_POST)>0){
+                        $_SESSION['message-success']="Yah... persyaratan layanan sudah dihapus, silakan masukan kebijakan yang baru ya :).";
+                        header("Location: term-of-service");exit;
+                    }
+                }
             }
-            if($_SESSION['id-role']==3){ // => administrasi
+            if($_SESSION['id-role']<=3){ // => administrasi
+                $data5=25;
+                $result5=mysqli_query($conn, "SELECT * FROM users");
+                $total5=mysqli_num_rows($result5);
+                $total_page5=ceil($total5/$data5);
+                $page5=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data5=($data5*$page5)-$data5;
+                if($_SESSION['id-role']==1){
+                    $users_data=mysqli_query($conn, "SELECT * FROM users 
+                        JOIN category_services ON users.id_category=category_services.id_category 
+                        JOIN users_role ON users.id_role=users_role.id_role
+                        JOIN users_status ON users.is_active=users_status.is_active
+                        JOIN users_access ON users.id_access=users_access.id_access 
+                        WHERE users.id_user!='$id_user' LIMIT $awal_data5, $data5
+                    ");
+                }else{
+                    $users_data=mysqli_query($conn, "SELECT * FROM users 
+                        JOIN category_services ON users.id_category=category_services.id_category 
+                        JOIN users_role ON users.id_role=users_role.id_role
+                        JOIN users_status ON users.is_active=users_status.is_active
+                        JOIN users_access ON users.id_access=users_access.id_access 
+                        WHERE users.id_role>=3 AND users.id_user!='$id_user' LIMIT $awal_data5, $data5
+                    ");
+                }
+                $users_data_role=mysqli_query($conn, "SELECT * FROM users_role");
+                $users_data_status=mysqli_query($conn, "SELECT * FROM users_status");
+                $users_data_access=mysqli_query($conn, "SELECT * FROM users_access");
+                if(isset($_POST['edit-role-user'])){
+                    if(users_role($_POST)>0){
+                        $_SESSION['message-success']="Role users berhasil diubah.";
+                        header("Location: users");exit;
+                    }
+                }
+                if(isset($_POST['edit-status-user'])){
+                    if(users_status($_POST)>0){
+                        $_SESSION['message-success']="Status users berhasil diubah.";
+                        header("Location: users");exit;
+                    }
+                }
+                if(isset($_POST['edit-access-user'])){
+                    if(users_access($_POST)>0){
+                        $_SESSION['message-success']="Akses users berhasil diubah.";
+                        header("Location: users");exit;
+                    }
+                }
+                if(isset($_POST['delete-user'])){
+                    if(delete_users($_POST)>0){
+                        $_SESSION['message-success']="Akun users berhasil dihapus.";
+                        header("Location: users");exit;
+                    }
+                }
             }
-            if($_SESSION['id-role']==4 || $_SESSION['id-role']==5){ // => teknisi & web dev/des
+            if($_SESSION['id-role']<=4 || $_SESSION['id-role']==5){ // => teknisi & web dev/des
             }
-            if($_SESSION['id-role']==6){ // => web client services
+            if($_SESSION['id-role']<=6){ // => web client services
             }
             if($_SESSION['id-role']==7){ // => users
                 if(isset($_POST['view-location'])){

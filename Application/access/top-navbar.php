@@ -89,7 +89,7 @@
             <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle text-dark" href="" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <?php if(mysqli_num_rows($user_views_profile)==0){?>
-                        <p class="text-danger">Qery error!</p>
+                        <p class="text-danger">Query error!</p>
                     <?php }if(mysqli_num_rows($user_views_profile)>0){while($row=mysqli_fetch_assoc($user_views_profile)){?>
                         <span class="mr-2 d-none d-lg-inline small"><?= $row['first_name'] ?></span>
                         <img class="img-profile rounded-circle" src="../Assets/img/img-users/<?= $row['img']?>">

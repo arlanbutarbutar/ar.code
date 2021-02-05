@@ -186,7 +186,7 @@
                                                 </div>
                                             </div>
                                         <!-- == Activity Users == -->
-                                            <div class="card border-0 shadow-sm mb-3 h-50 overflow-auto">
+                                            <div class="card border-0 shadow-sm mb-5 h-50 overflow-auto">
                                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                                     <h6 class="m-0 font-weight-bold" <?= $color_black ?>>Users Activity</h6>
                                                 </div>
