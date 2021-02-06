@@ -373,6 +373,39 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: users");exit;
                     }
                 }
+                $data6=25;
+                $result6=mysqli_query($conn, "SELECT * FROM notes_type");
+                $total6=mysqli_num_rows($result6);
+                $total_page6=ceil($total6/$data6);
+                $page6=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data6=($data6*$page6)-$data6;
+                $notes_type=mysqli_query($conn, "SELECT * FROM notes_type LIMIT $awal_data6, $data6");
+                if(isset($_POST['submit-notes-type'])){
+                    if(notes_type($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menambahkan nota baru.";
+                        header("Location: setting-nota");exit;
+                    }
+                }
+                if(isset($_POST['edit-notes-type'])){
+                    if(edit_notes_type($_POST)>0){
+                        $_SESSION['message-success']="Berhasil mengubah nota.".$_POST['name'].".";
+                        header("Location: setting-nota");exit;
+                    }
+                }
+                if(isset($_POST['delete-notes-type'])){
+                    if(delete_notes_type($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menghapus nota ".$_POST['name'].".";
+                        header("Location: setting-nota");exit;
+                    }
+                }
+                $category_services=mysqli_query($conn, "SELECT * FROM category_services");
+                $users_teknisi=mysqli_query($conn, "SELECT * FROM users WHERE id_role=4");
+                if(isset($_POST['submit-notes'])){
+                    if(notes($_POST)>0){
+                        $_SESSION['message-success']="Berhasil memasukan nota";
+                        header("Location: nota-tinggal");exit;
+                    }
+                }
             }
             if($_SESSION['id-role']<=4 || $_SESSION['id-role']==5){ // => teknisi & web dev/des
             }

@@ -35,98 +35,120 @@
                                     </div>
                                 <!-- == insert data == -->
                                     <div class="col-lg-4 mt-3">
-                                        <div class="card shadow border-0 mb-3">
-                                            <div class="card-body text-center text-dark">
-                                                <h3 id="timestamp"><?php require_once("../Application/controller/ajax_timestamp.php")?></h3>
-                                                <p>Waktu Indonesia Tengah</p>
+                                        <!-- == card time == -->
+                                            <div class="card shadow border-0 mb-3">
+                                                <div class="card-body text-center text-dark">
+                                                    <h3 id="timestamp"><?php require_once("../Application/controller/ajax_timestamp.php")?></h3>
+                                                    <p>Waktu Indonesia Tengah</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="card shadow border-0 mb-3">
-                                            <div class="card-body text-center">
-                                                <button class="btn btn-sm shadow" <?= $style_btn?> type="button" data-toggle="collapse" data-target="#collapseAdding-no-nota" aria-expanded="false" aria-controls="collapseAdding-no-nota">
-                                                    Insert No. Nota
-                                                </button>
-                                                <div class="row d-flex mt-4">
-                                                    <?php foreach($setting_nota_view as $row1):?>
-                                                    <div class="col-lg-4 text-dark text-align-center pt-2">
-                                                        <h6 class="font-weight-bold"><?= $row1['name']?></h6>
-                                                        <p><?= $row1['no_nota']?></p>
-                                                    </div>
-                                                    <?php endforeach;?>
+                                        <!-- card insert data -->
+                                            <div class="card shadow border-0 mb-3">
+                                                <div class="card-body text-center">
+                                                    <button class="btn btn-sm shadow" <?= $color_black?> type="button" data-toggle="collapse" data-target="#collapseAdding-no-nota" aria-expanded="false" aria-controls="collapseAdding-no-nota">Insert Notes Type</button>
+                                                    <p class="small" <?= $color_black?>>Masukan tipe nota jika ingin ditambahakan.</p>
+                                                </div>
+                                            </div>
+                                        <!-- collapse insert data -->
+                                            <div class="collapse" id="collapseAdding-no-nota">
+                                                <div class="card card-body shadow border-0 text-center mb-5">
+                                                    <form action="" method="POST">
+                                                        <div class="form-group">
+                                                            <input type="text" name="name" class="form-control text-center" placeholder="Nama" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input type="number" name="no-nota" class="form-control text-center" placeholder="Nomor nota" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input type="text" name="kombinasi" class="form-control text-center" placeholder="Kombinasi">
+                                                            <small class="text-info small">Memasukan karakter kombinasi hanya jika diperlukan!</small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <button type="submit" name="submit-notes-type" class="btn btn-sm shadow" <?= $bg_black?>>Apply</button>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="collapse" id="collapseAdding-no-nota">
-                                            <div class="card card-body shadow border-0 text-center">
-                                                <form action="" method="POST">
-                                                    <div class="form-group">
-                                                        <input type="text" name="name" class="form-control" placeholder="Name">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input type="number" name="no-nota" class="form-control" placeholder="Number">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit" name="add-no-nota" class="btn btn-sm" <?= $style_btn?>>Apply</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 <!-- == data settings == -->
-                                    <div class="col-lg-8 mt-3">
-                                        <div class="card shadow border-0">
+                                    <div class="col-lg-8">
+                                        <div class="card shadow border-0 mb-5 mt-3" style="overflow-x: auto">
                                             <div class="card-body">
-                                                <style>#scroll-x{overflow-x: auto}</style>
-                                                <div class="col-md-12 m-0 p-0" id="scroll-x">
-                                                    <table class="table table-borderless text-center text-dark mt-3">
-                                                        <thead>
-                                                            <tr>
-                                                                <th scope="col">Name</th>
-                                                                <th scope="col">Number Nota</th>
-                                                                <th scope="col">Date</th>
-                                                                <th colspan="2">Aksi</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php if(mysqli_num_rows($setting_nota_data)==0){?>
+                                                <table class="table table-sm text-center" <?= $color_black?>>
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">#</th>
+                                                            <th scope="col">Nama</th>
+                                                            <th scope="col">Monor Nota</th>
+                                                            <th scope="col">Kombinasi</th>
+                                                            <th scope="col">Tgl Buat</th>
+                                                            <th colspan="2">Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php $no=1; if(mysqli_num_rows($notes_type)==0){?>
                                                             <tr><td colspan="5" class="text-dark font-weight-bold">Maaf data saat ini kosong!</td></tr>
-                                                            <?php }else if(mysqli_num_rows($setting_nota_data)>0){while($row2=mysqli_fetch_assoc($setting_nota_data)){?>
+                                                        <?php }else if(mysqli_num_rows($notes_type)>0){while($row=mysqli_fetch_assoc($notes_type)){?>
                                                             <tr>
-                                                                <td><?= $row2['name']?></td>
-                                                                <td><?= $row2['no_nota']?></td>
-                                                                <td><?= $row2['date']?></td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-warning btn-sm" data-toggle="collapse" data-target="#collapse<?= $row2['id_nota']?>" aria-expanded="false" aria-controls="collapse<?= $row2['id_nota']?>"><i class="fas fa-pen"></i> Edit</button>
-                                                                </td>
-                                                                <td><form action="" method="POST">
-                                                                    <input type="hidden" name="id-nota" value="<?= $row2['id_nota']?>">
-                                                                    <button type="submit" name="del-no-nota" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
-                                                                </form></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="5">
-                                                                    <div class="collapse" id="collapse<?= $row2['id_nota']?>">
-                                                                        <div class="card card-body shadow border-0">
+                                                                <td><?= $no?></td>
+                                                                <td><?= $row['name']?></td>
+                                                                <td><?= $row['no_nota']?></td>
+                                                                <td><?= $row['kombinasi']?></td>
+                                                                <td><?= $row['date']?></td>
+                                                                <td scope="row">
+                                                                    <div class="dropdown no-arrow">
+                                                                        <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-pen"></i> Ubah</button>
+                                                                        <?php if($_SESSION['id-access']==1){?>
+                                                                        <div class="dropdown-menu p-2 border-0 shadow text-center" aria-labelledby="dropdownMenuButton">
                                                                             <form action="" method="POST">
-                                                                                <input type="hidden" name="id-nota" value="<?= $row2['id_nota']?>">
+                                                                                <input type="hidden" name="id-nota" value="<?= $row['id_nota']?>">
+                                                                                <input type="hidden" name="name" value="<?= $row['name']?>">
                                                                                 <div class="form-group">
-                                                                                    <input type="text" name="name" class="form-control" placeholder="Name">
+                                                                                    <input type="number" name="no-nota" class="form-control text-center" placeholder="Nomor nota" required>
                                                                                 </div>
                                                                                 <div class="form-group">
-                                                                                    <input type="number" name="no-nota" class="form-control" placeholder="Number" value="<?= $row2['no_nota']?>">
+                                                                                    <input type="text" name="kombinasi" class="form-control text-center" placeholder="Kombinasi">
                                                                                 </div>
                                                                                 <div class="form-group">
-                                                                                    <button type="submit" name="edit-no-nota" class="btn btn-warning btn-sm">Apply</button>
+                                                                                    <button type="submit" name="edit-notes-type" class="btn btn-sm shadow" <?= $bg_black?>>Apply</button>
                                                                                 </div>
                                                                             </form>
                                                                         </div>
+                                                                        <?php }?>
                                                                     </div>
                                                                 </td>
+                                                                <td><form action="" method="POST">
+                                                                    <input type="hidden" name="id-nota" value="<?= $row['id_nota']?>">
+                                                                    <input type="hidden" name="name" value="<?= $row['name']?>">
+                                                                    <button type="submit" name="delete-notes-type" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Hapus</button>
+                                                                </form></td>
                                                             </tr>
-                                                            <?php }}?>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                        <?php $no++; }}?>
+                                                    </tbody>
+                                                </table>
+                                                <nav class="small" aria-label="Page navigation example">
+                                                    <ul class="pagination justify-content-center">
+                                                        <?php if(isset($page6)){if(isset($total_page6)){if($page6>1):?>
+                                                        <li class="page-item shadow">
+                                                            <a class="page-link border-0" <?= $bg_black?> href="setting-nota?page=<?= $page6-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
+                                                        </li>
+                                                        <?php endif;?>
+                                                        <?php for($i=1; $i<=$total_page6; $i++):?>
+                                                            <?php if($i<=5):?>
+                                                                <?php if($i==$page6):?>
+                                                                    <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="setting-nota?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                <?php else :?>
+                                                                    <li class="page-item shadow"><a class="page-link border-0" href="setting-nota?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                <?php endif;?>
+                                                            <?php endif;?>
+                                                        <?php endfor;?>
+                                                        <?php if($page6<$total_page6):?>
+                                                        <li class="page-item shadow">
+                                                            <a class="page-link border-0" <?= $bg_black?> href="setting-nota?page=<?= $page6+1;?>">Next</a>
+                                                        </li>
+                                                        <?php endif;}}?>
+                                                    </ul>
+                                                </nav>
                                             </div>
                                         </div>
                                     </div>

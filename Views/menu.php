@@ -66,9 +66,9 @@
                                                                     <th scope="row"><?= $no?></th>
                                                                     <td><?= $row['menu']?></td>
                                                                     <td>
-                                                                        <button type="button" class="btn btn-warning btn-sm shadow dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-pen"></i> Ubah
+                                                                        <button type="button" class="btn btn-warning btn-sm shadow dropdown-toggle no-arrow" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-pen"></i> Ubah
                                                                         </button>
-                                                                        <div class="dropdown-menu p-2 border-0 shadow text-center">
+                                                                        <div class="dropdown-menu no-arrow p-2 border-0 shadow text-center">
                                                                             <form action="" method="POST">
                                                                                 <input type="hidden" name="id-menu" value="<?= $row['id_menu']?>">
                                                                                 <input type="hidden" name="menu-old" value="<?= $row['menu']?>">
