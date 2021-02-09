@@ -136,6 +136,7 @@
         if(isset($_SESSION['id-user'])){
             // => all roles
                 $link_log="http://localhost/arcode/views/";
+                $date=date('l, d M Y'); $date_search=date('Y-m-d');
             // => role selection
                 if($_SESSION['id-role']<=6){ // => all administrator || ==> Dashboard || ==> web client services
                     function contact_user($msg){global $conn; // == mail-access => 2/contact user
@@ -153,7 +154,7 @@
                         smtp_mail($to, $subject, $message, '', '', 0, 0, true);
                         return mysqli_affected_rows($conn);
                     }
-                    function photo_profile($data){global $conn,$time;
+                    function photo_profile($data){global $conn,$time,$date;
                         $id_user=addslashes(trim($data['id-user']));
                         $img=file_photo_user($id_user);
                         if(!$img){return false;}
@@ -161,7 +162,6 @@
                         if($img_old!='default.png'){unlink('../Assets/img/img-users/'.$img_old);}
                         $id_log=$_SESSION['id-log'];
                         $log="Mengubah foto profile.";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE users SET img='$img' WHERE id_user='$id_user'");
                         return mysqli_affected_rows($conn);
@@ -194,7 +194,7 @@
                         move_uploaded_file($tmpName,'../Assets/img/img-users/'.$encrypt);
                         return $encrypt;
                     }
-                    function email_profile($data){global $conn,$time;
+                    function email_profile($data){global $conn,$time,$date;
                         $id_user=addslashes(trim($data['id-user']));
                         $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email']))));
                         $email_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email-old']))));
@@ -224,13 +224,12 @@
                         }else if(mysqli_num_rows($check_users)==0){
                             $id_log=$_SESSION['id-log'];
                             $log="Ubah email dari ".$email_old." menjadi email baru ".$email.".";
-                            $date=date('l, d M Y');
                             mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                             mysqli_query($conn, "UPDATE users SET email='$email' WHERE id_user='$id_user'");
                             return mysqli_affected_rows($conn);
                         }
                     }
-                    function biodata_profile($data){global $conn,$time;
+                    function biodata_profile($data){global $conn,$time,$date;
                         $id_user=addslashes(trim($data['id-user']));
                         $first_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['first-name']))));
                         $last_name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['last-name']))));
@@ -239,12 +238,11 @@
                         $postal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['postal']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Ubah biodata diri menjadi ".$first_name." ".$last_name.", nomor handphone ".$phone.", alamat ".$address.", kode pos ".$postal.".";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE users SET first_name='$first_name', last_name='$last_name', phone='$phone', address='$address', postal='$postal' WHERE id_user='$id_user'");
                         return mysqli_affected_rows($conn);
                     }
-                    function password_profile($data){global $conn, $time;
+                    function password_profile($data){global $conn,$time,$date;
                         $id_user=addslashes(trim($data['id-user']));
                         $password1=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password1']))));
                         $password2=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['password2']))));
@@ -262,50 +260,45 @@
                             $_SESSION['message-danger']="Password yang kamu masukan terlalu pendek (Min: 8)!";
                             header("Location: profile-settings");return false;
                         }
-                        $date=date('Y-m-d');
                         $password=password_hash($password1, PASSWORD_DEFAULT);
                         $id_log=$_SESSION['id-log'];
                         $log="telah mengubah password pada tanggal".$date;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE users SET password='$password' WHERE id_user='$id_user'");
                         return mysqli_affected_rows($conn);
                     }
-                    function help_message($data){global $conn, $time;
+                    function help_message($data){global $conn,$time,$date;
                         $id_user=$_SESSION['id-user'];
                         $help_message=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['help-message']))));
                         $tgl_cari=date('Y-m-d');
                         $id_log=$_SESSION['id-log'];
                         $log="Mengirimkan pesan help kepada Client Service UGD HP";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO users_help(id_user,help_message,date,tgl_cari) VALUES('$id_user','$help_message','$date','$tgl_cari')");
                         return mysqli_affected_rows($conn);
                     }
-                    // function blank__($data){global $conn, $time;}
+                    // function blank__($data){global $conn,$time,$date;}
                 }
                 if($_SESSION['id-role']<=2){ // => founder & developer app
-                    function help_answer_message($data){global $conn, $time;
+                    function help_answer_message($data){global $conn,$time,$date;
                         $id_help=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-help']))));
                         $answer=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['answer']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Membalas help dengan id help #".$id_help;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE users_help SET answer='$answer' WHERE id_help='$id_help'");
                         return mysqli_affected_rows($conn);
                     }
-                    function report_problem($data){global $conn, $time;
+                    function report_problem($data){global $conn,$time,$date;
                         $problem_message=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['problem-message']))));
                         $tgl_cari=date('Y-m-d');
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan report a problem: ".$problem_message;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO report_problem(problem_message,date,tgl_cari) VALUES('$problem_message','$date','$tgl_cari')");
                         return mysqli_affected_rows($conn);
                     }
-                    function menu($data){global $conn, $time;
+                    function menu($data){global $conn,$time,$date;
                         $menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['menu']))));
                         $check_menu=mysqli_query($conn, "SELECT * FROM menu WHERE menu LIKE '%$menu%'");
                         if(mysqli_num_rows($check_menu)>0){
@@ -314,12 +307,11 @@
                         }
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan menu menejemen baru";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO menu(menu) VALUES('$menu')");
                         return mysqli_affected_rows($conn);
                     }
-                    function edit_menu($data){global $conn, $time;
+                    function edit_menu($data){global $conn,$time,$date;
                         $id_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-menu']))));
                         $menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['menu']))));
                         $menu_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['menu-old']))));
@@ -330,23 +322,21 @@
                         }else if(mysqli_num_rows($check_menu)==0){
                             $id_log=$_SESSION['id-log'];
                             $log="Mengubah nama menu dari ".$menu_old." menjadi ".$menu;
-                            $date=date('l, d M Y');
                             mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                             mysqli_query($conn, "UPDATE menu SET menu='$menu' WHERE id_menu='$id_menu'");
                             return mysqli_affected_rows($conn);
                         }
                     }
-                    function delete_menu($data){global $conn, $time;
+                    function delete_menu($data){global $conn,$time,$date;
                         $id_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-menu']))));
                         $menu_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['menu-old']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus menu ".$menu_old;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "DELETE FROM menu WHERE id_menu='$id_menu'");
                         return mysqli_affected_rows($conn);
                     }
-                    function sub_menu($data){global $conn, $time;
+                    function sub_menu($data){global $conn,$time,$date;
                         $id_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-menu']))));
                         $title=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['title']))));
                         $check_title=mysqli_query($conn, "SELECT * FROM menu_sub WHERE title LIKE '%$title%'");
@@ -405,12 +395,11 @@
                         fclose($file);
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan sub menu dengan nama ".$title;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO menu_sub(id_menu,title,url,icon,is_active) VALUES('$id_menu','$title','$url','$icon','$is_active')");
                         return mysqli_affected_rows($conn);
                     }
-                    function edit_sub_menu($data){global $conn, $time;
+                    function edit_sub_menu($data){global $conn,$time,$date;
                         $id_sub_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-sub-menu']))));
                         $id_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-menu']))));
                         $title=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['title']))));
@@ -419,18 +408,16 @@
                         $is_active=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['is-active']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Mengedit sub menu dengan nama ".$title;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE menu_sub SET id_menu='$id_menu', title='$title', url='$url', icon='$icon', is_active='$is_active' WHERE id_sub_menu='$id_sub_menu'");
                         return mysqli_affected_rows($conn);
                     }
-                    function delete_sub_menu($data){global $conn, $time;
+                    function delete_sub_menu($data){global $conn,$time,$date;
                         $id_sub_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-sub-menu']))));
                         $title=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['title']))));
                         $url=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['url']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus sub menu dengan nama ".$title;
-                        $date=date('l, d M Y');
                         $files=glob($url.".php");
                         foreach ($files as $file) {
                             if (is_file($file))
@@ -440,143 +427,129 @@
                         mysqli_query($conn, "DELETE FROM menu_sub WHERE id_sub_menu='$id_sub_menu'");
                         return mysqli_affected_rows($conn);
                     }
-                    function access_menu($data){global $conn, $time;
+                    function access_menu($data){global $conn,$time,$date;
                         $id_role=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-role']))));
                         $id_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-menu']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan hak akses menu kepada id role #".$id_role;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO menu_access(role_id,id_menu) VALUES('$id_role','$id_menu')");
                         return mysqli_affected_rows($conn);
                     }
-                    function delete_access_menu($data){global $conn, $time;
+                    function delete_access_menu($data){global $conn,$time,$date;
                         $id_access_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-access-menu']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus hak akses menu dengan id #".$id_access_menu;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "DELETE FROM menu_access WHERE id_access_menu='$id_access_menu'");
                         return mysqli_affected_rows($conn);
                     }
-                    function access_sub_menu($data){global $conn, $time;
+                    function access_sub_menu($data){global $conn,$time,$date;
                         $id_role=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-role']))));
                         $id_sub_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-sub-menu']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan hak akses sub menu kepada id role #".$id_role;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO menu_sub_access(role_id,id_sub_menu) VALUES('$id_role','$id_sub_menu')");
                         return mysqli_affected_rows($conn);
                     }
-                    function delete_access_sub_menu($data){global $conn, $time;
+                    function delete_access_sub_menu($data){global $conn,$time,$date;
                         $id_access_sub_menu=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-access-sub-menu']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus hak akses sub menu dengan id #".$id_access_sub_menu;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "DELETE FROM menu_sub_access WHERE id_access_sub_menu='$id_access_sub_menu'");
                         return mysqli_affected_rows($conn);
                     }
-                    function privacy_policy($data){global $conn, $time;
+                    function privacy_policy($data){global $conn,$time,$date;
                         $privacy_policy=$data['privacy-policy'];
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan kebijakan privasi yang baru!";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO privacy_policy(privacy_policy) VALUES('$privacy_policy')");
                         return mysqli_affected_rows($conn);
                     }
-                    function edit_privacy_policy($data){global $conn, $time;
+                    function edit_privacy_policy($data){global $conn,$time,$date;
                         $id_pp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-pp']))));
                         $privacy_policy=$data['privacy-policy'];
                         $id_log=$_SESSION['id-log'];
                         $log="Mengedit kebijakan privasi!";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE privacy_policy SET privacy_policy='$privacy_policy' WHERE id_pp='$id_pp'");
                         return mysqli_affected_rows($conn);
                     }
-                    function delete_privacy_policy($data){global $conn, $time;
+                    function delete_privacy_policy($data){global $conn,$time,$date;
                         $id_pp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-pp']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus kebijakan privasi!";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "DELETE FROM privacy_policy WHERE id_pp='$id_pp'");
                         return mysqli_affected_rows($conn);
                     }
-                    function term_of_service($edit){global $conn, $time;
+                    function term_of_service($edit){global $conn,$time,$date;
                         $term_of_service=$edit['term-of-service'];
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan persyaratan layanan!";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO term_of_service(term_of_service) VALUES('$term_of_service')");
                         return mysqli_affected_rows($conn);
                     }
-                    function edit_term_of_service($data){global $conn, $time;
+                    function edit_term_of_service($data){global $conn,$time,$date;
                         $id_term=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-term']))));
                         $term_of_service=$data['term-of-service'];
                         $id_log=$_SESSION['id-log'];
                         $log="Mengedit persyaratan layanan!";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE term_of_service SET term_of_service='$term_of_service' WHERE id_term='$id_term'");
                         return mysqli_affected_rows($conn);
                     }
-                    function delete_term_of_service($data){global $conn, $time;
+                    function delete_term_of_service($data){global $conn,$time,$date;
                         $id_term=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-term']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus persyaratan layanan!";
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "DELETE FROM term_of_service WHERE id_term='$id_term'");
                         return mysqli_affected_rows($conn);
                     }
-                    function users_role($data){global $conn, $time;
+                    function users_role($data){global $conn,$time,$date;
                         $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
                         $id_role=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-role']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Mengubah role user dengan id #".$id_user;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE users SET id_role='$id_role' WHERE id_user='$id_user'");
                         return mysqli_affected_rows($conn);
                     }
-                    function users_status($data){global $conn, $time;
+                    function users_status($data){global $conn,$time,$date;
                         $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
                         $is_active=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['is-active']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Mengubah status user dengan id #".$id_user;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE users SET is_active='$is_active' WHERE id_user='$id_user'");
                         return mysqli_affected_rows($conn);
                     }
-                    function users_access($data){global $conn, $time;
+                    function users_access($data){global $conn,$time,$date;
                         $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
                         $id_access=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-access']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Mengubah akses user dengan id #".$id_user;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE users SET id_access='$id_access' WHERE id_user='$id_user'");
                         return mysqli_affected_rows($conn);
                     }
-                    function delete_users($data){global $conn, $time;
+                    function delete_users($data){global $conn,$time,$date;
                         $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus akun user dengan id #".$id_user;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "DELETE FROM users WHERE id_user='$id_user'");
                         return mysqli_affected_rows($conn);
                     }
-                    // function blank__($data){global $conn, $time;}
+                    // function blank__($data){global $conn,$time,$date;}
                 }
                 if($_SESSION['id-role']<=3){ // => administrasi
-                    function notes_type($data){global $conn, $time;
+                    function notes_type($data){global $conn,$time,$date;
                         $name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['name']))));
                         $check_name=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%$name%'");
                         if(mysqli_num_rows($check_name)>0){
@@ -587,65 +560,116 @@
                         $kombinasi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kombinasi']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menambahkan nota baru dengan nama ".$name;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "INSERT INTO notes_type(name,no_nota,kombinasi,date) VALUES('$name','$no_nota','$kombinasi','$date')");
                         return mysqli_affected_rows($conn);
                     }
-                    function edit_notes_type($data){global $conn, $time;
+                    function edit_notes_type($data){global $conn,$time,$date;
                         $id_nota=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-nota']))));
                         $name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['name']))));
                         $no_nota=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['no-nota']))));
                         $kombinasi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kombinasi']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Mengubah nota ".$name." dengan nomor nota ".$no_nota;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "UPDATE notes_type SET no_nota='$no_nota', kombinasi='$kombinasi' WHERE id_nota='$id_nota'");
                         return mysqli_affected_rows($conn);
                     }
-                    function delete_notes_type($data){global $conn, $time;
+                    function delete_notes_type($data){global $conn,$time,$date;
                         $id_nota=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-nota']))));
                         $name=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['name']))));
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus nota ".$name;
-                        $date=date('l, d M Y');
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
                         mysqli_query($conn, "DELETE FROM notes_type WHERE id_nota='$id_nota'");
                         return mysqli_affected_rows($conn);
                     }
-                    function notes($data){global $conn, $time;
-                        $check_notes=mysqli_query($conn, "SELECT * FROM notes ORDER BY id_nota DESC LIMIT 1");
+                    function notes($data){global $conn,$time,$date,$date_search;
+                        $check_notes=mysqli_query($conn, "SELECT * FROM notes ORDER BY id_data DESC LIMIT 1");
                         if(mysqli_num_rows($check_notes)>0){
                             $row=mysqli_fetch_assoc($check_notes);
-                            $id_nota_awal=$row['id_nota'];
-                            $id_nota=$id_nota_awal+1;
+                            $id_data_awal=$row['id_data'];
+                            $id_data=$id_data_awal+1;
                         }else if(mysqli_num_rows($check_notes)==0){
-                            $id_nota=202101;
+                            $id_data=202101;
                         }
-                        $id_user=crc32($id_nota);
+                        $check_users=mysqli_query($conn, "SELECT * FROM users ORDER BY id_user DESC LIMIT 1");
+                        if(mysqli_num_rows($check_users)>0){
+                            $row=mysqli_fetch_assoc($check_users);
+                            $id_users=$row['id_user'];
+                            $id_user=$id_users+1;
+                        }else if(mysqli_num_rows($check_users)==0){
+                            $id_user=202101;
+                        }
                         $id_barang=$id_user;
+                        $data_encrypt=crc32($id_user);
                         $nota_tinggal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['nota-tinggal']))));
                         $check_tinggal=mysqli_query($conn, "SELECT * FROM notes WHERE id_nota_tinggal='$nota_tinggal'");
                         if(mysqli_num_rows($check_tinggal)>0){
-                            $_SESSION['message-danger']="Nomor nota tinggal yang kamu masukan sudah ada, cek kembali!";
-                            header("Location: nota-tinggal");return false;
+                            $notes_type_tinggal=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota Tinggal%'");
+                            $row_notes_type_tinggal=mysqli_fetch_assoc($notes_type_tinggal);
+                            $no_nota_tinggal=$row_notes_type_tinggal['no_nota'];
+                            if($nota_tinggal==$no_nota_tinggal || $nota_tinggal>$no_nota_tinggal){
+                                $_SESSION['message-danger']="Nomor nota tinggal saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota tinggal!";
+                                header("Location: nota-tinggal");return false;
+                            }else{
+                                $_SESSION['message-danger']="Nomor nota tinggal yang kamu masukan sudah ada, cek kembali!";
+                                header("Location: nota-tinggal");return false;
+                            }
+                        }else if(mysqli_num_rows($check_tinggal)==0){
+                            $notes_type_tinggal=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota Tinggal%'");
+                            $row_notes_type_tinggal=mysqli_fetch_assoc($notes_type_tinggal);
+                            $no_nota_tinggal=$row_notes_type_tinggal['no_nota'];
+                            if($nota_tinggal==$no_nota_tinggal || $nota_tinggal>$no_nota_tinggal){
+                                $_SESSION['message-danger']="Nomor nota tinggal yang kamu masukan saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota tinggal!";
+                                header("Location: nota-tinggal");return false;
+                            }
                         }
                         if(!empty($data['nota-dp'])){
                             $nota_dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['nota-dp']))));
                             $check_dp=mysqli_query($conn, "SELECT * FROM notes WHERE id_nota_dp='$nota_dp'");
                             if(mysqli_num_rows($check_dp)>0){
-                                $_SESSION['message-danger']="Nomor nota dp yang kamu masukan sudah ada, cek kembali!";
+                                $notes_type_dp=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota DP%'");
+                                $row_notes_type_dp=mysqli_fetch_assoc($notes_type_dp);
+                                $no_nota_dp=$row_notes_type_dp['no_nota'];
+                                if($nota_dp==$no_nota_dp || $nota_dp>$no_nota_dp){
+                                    $_SESSION['message-danger']="Nomor nota dp yang kamu masukan saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota dp!";
+                                    header("Location: nota-tinggal");return false;
+                                }else{
+                                    $_SESSION['message-danger']="Nomor nota dp yang kamu masukan sudah ada, cek kembali!";
+                                    header("Location: nota-tinggal");return false;
+                                }
+                            }else if(mysqli_num_rows($check_dp)==0){
+                                $notes_type_dp=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota DP%'");
+                                $row_notes_type_dp=mysqli_fetch_assoc($notes_type_dp);
+                                $no_nota_dp=$row_notes_type_dp['no_nota'];
+                                if($nota_dp==$no_nota_dp || $nota_dp>$no_nota_dp){
+                                    $_SESSION['message-danger']="Nomor nota dp yang kamu masukan saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota dp!";
+                                    header("Location: nota-tinggal");return false;
+                                }
+                            }
+                        }else if(empty($data['nota-dp'])){
+                            $nota_dp="-";
+                        }
+                        if(!empty($data['nota-dp'])){
+                            if(empty($data['dp']) || $data['dp']==0){
+                                $_SESSION['message-danger']="Kamu belum memasukan uang muka atau DP sementara nomor DP ada, sialakan cek lagi!";
                                 header("Location: nota-tinggal");return false;
                             }
                         }
                         $username=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['username']))));
+                        $tlpn=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['tlpn']))));
                         if(!empty($data['email'])){
                             $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email']))));
+                            $password=$email;
+                        }else if(empty($data['email'])){
+                            $email=$tlpn;
+                            $password=$email;
                         }
-                        $tlpn=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['tlpn']))));
                         if(!empty($data['alamat'])){
                             $alamat=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['alamat']))));
+                        }else if(empty($data['alamat'])){
+                            $alamat='-';
                         }
                         $id_layanan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-layanan']))));
                         if($id_layanan==1){
@@ -659,35 +683,97 @@
                         $kerusakan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kerusakan']))));
                         if(!empty($data['kondisi'])){
                             $kondisi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kondisi']))));
+                        }else if(empty($data['kondisi'])){
+                            $kondisi="-";
                         }
                         if(!empty($data['kelengkapan'])){
                             $kelengkapan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kelengkapan']))));
+                        }else if(empty($data['kelengkapan'])){
+                            $kelengkapan="-";
                         }
                         $id_teknisi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-teknisi']))));
                         $tgl_cari=date('Y-m-d');
                         if(!empty($data['tgl-ambil'])){
                             $tgl_ambil=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['tgl-ambil']))));
+                        }else if(empty($data['tgl-ambil'])){
+                            $tgl_ambil="-";
                         }
                         if(!empty($data['dp'])){
                             $dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['dp']))));
+                        }else if(empty($data['dp'])){
+                            $dp=0;
                         }
                         $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['biaya']))));
                         if($biaya<=10000){
                             $_SESSION['message-danger']="Pastikan anda memasukan biaya dengan benar!";
                             header("Location: nota-tinggal");return false;
                         }
+                        $barcode=barcode_notes($data_encrypt);
+                        $id_log=$_SESSION['id-log'];
+                        $log="Menambahkan nota tinggal dengan nomor nota ".$nota_tinggal;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "INSERT INTO users(id_user,data_encrypt,first_name,email,password,phone,address,kebijakan) VALUES('$id_user','$data_encrypt','$username','$email','$password','$tlpn','$alamat','-')");
+                        if($id_layanan==1){
+                            mysqli_query($conn, "INSERT INTO handphone(id_hp,type,seri,imei) VALUES('$id_barang','$type','$seri','$imei')");
+                        }else if($id_layanan==2){
+                            mysqli_query($conn, "INSERT INTO laptop(id_laptop,merek,seri) VALUES('$id_barang','$merek','$seri')");
+                        }
+                        mysqli_query($conn, "INSERT INTO notes(id_nota_tinggal,id_nota_dp,id_user,id_layanan,id_barang,id_pegawai,tgl_cari,tgl_masuk,tgl_status,tgl_ambil,time,kerusakan,kondisi,kelengkapan,dp,biaya,barcode) VALUES('$nota_tinggal','$nota_dp','$id_user','$id_layanan','$id_barang','$id_teknisi','$date_search','$date','$date','$tgl_ambil','$time','$kerusakan','$kondisi','$kelengkapan','$dp','$biaya','$barcode')");
+                        return mysqli_affected_rows($conn);
                     }
-                    function edit_notes($data){global $conn, $time;}
-                    function delete_notes($data){global $conn, $time;
-                        $id_data=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-data']))));
+                    function barcode_notes($data_encrypt){
+                        require_once('../Vendor/phpqrcode/qrlib.php');
+                        $qrvalue = "http://localhost/ar.code/Views/qr-aksi?auth=".$data_encrypt;
+                        $tempDir = "../Assets/img/img-barcode-notes/";
+                        $codeContents = $qrvalue;
+                        $fileName = $data_encrypt.".png";
+                        $pngAbsoluteFilePath = $tempDir.$fileName;
+                        if(!file_exists($pngAbsoluteFilePath)){
+                            QRcode::png($codeContents, $pngAbsoluteFilePath);
+                        }
+                        return $fileName;
                     }
-                    // function blank__($data){global $conn, $time;}
+                    function remake_barcode($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $barcode_old=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['barcode-old']))));
+                        $files=glob("../Assets/img/img-barcode-notes/".$barcode_old);
+                        foreach ($files as $file) {
+                            if (is_file($file))
+                            unlink($file);
+                        }
+                        $data_encrypt=crc32($id_user);
+                        $barcode=barcode_remake_notes($data_encrypt);
+                        $id_log=$_SESSION['id-log'];
+                        $log="Membuat ulang barcode #".$barcode;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET barcode='$barcode' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function barcode_remake_notes($data_encrypt){
+                        require_once('../Vendor/phpqrcode/qrlib.php');
+                        $qrvalue = "https://072896221983.ngrok.io/ar.code/Views/qr-aksi?auth=".$data_encrypt;
+                        $tempDir = "../Assets/img/img-barcode-notes/";
+                        $codeContents = $qrvalue;
+                        $fileName = $data_encrypt.".png";
+                        $pngAbsoluteFilePath = $tempDir.$fileName;
+                        if(!file_exists($pngAbsoluteFilePath)){
+                            QRcode::png($codeContents, $pngAbsoluteFilePath);
+                        }
+                        return $fileName;
+                    }
+                    function delete_notes($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                    }
+                    // function blank__($data){global $conn,$time,$date;}
                 }
                 if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
-                    // function blank__($data){global $conn, $time;}
+                    function edit_notes($data){global $conn,$time,$date;
+                        $id_data=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-data']))));
+                    }
+                    // function blank__($data){global $conn,$time,$date;}
                 }
                 if($_SESSION['id-role']==7){ // => users
-                    // function blank__($data){global $conn, $time;}
+                    // function blank__($data){global $conn,$time,$date;}
                 }
         }
 

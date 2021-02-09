@@ -44,7 +44,7 @@
                                                                     <small class="text-danger">Wajib*</small>
                                                                 </div>
                                                                 <div class='form-group'>
-                                                                    <input type="number" name="nota-dp" placeholder="Nomor nota tinggal" class="form-control text-center" required>
+                                                                    <input type="number" name="nota-dp" placeholder="Nomor nota dp" class="form-control text-center">
                                                                     <small class="text-info">Jika ada isikan!</small>
                                                                 </div>
                                                                 <div class='form-group'>
@@ -65,36 +65,41 @@
                                                                 <div class='form-group'>
                                                                     <select name="id-layanan" class="form-control" required>
                                                                         <option>Pilih layanan</option>
-                                                                        <?php ?>
-                                                                            <option value=""></option>
-                                                                        <?php ?>
+                                                                        <?php foreach($category_services as $row_layanan):?>
+                                                                            <option value="<?= $row_layanan['id_category']?>"><?= $row_layanan['product']?></option>
+                                                                        <?php endforeach;?>
                                                                     </select>
+                                                                    <small class="text-danger">Wajib*</small>
                                                                 </div>
                                                                 <div class="row">
                                                                     <h6 class="font-weight-bold" <?= $color_black?>><span class="badge badge-warning">Perhatian!</span> Mengisi sesui dengan layanan yang dipilih!</h6>
                                                                     <div class="col-lg-6">
-                                                                        <h6 class="font-weight-bold" <?= $color_black?>>Handphone</h6>
-                                                                        <div class="form-group">
-                                                                            <input type="text" name="type" placeholder="Type" class="form-control text-center">
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <input type="text" name="seri" placeholder="Seri" class="form-control text-center">
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <input type="text" name="imei" placeholder="Imei" class="form-control text-center">
-                                                                        </div>
+                                                                        <button class="btn btn-link btn-sm font-weight-bold" <?= $color_black?> type="button" data-toggle="collapse" data-target="#handphone" aria-expanded="false" aria-controls="handphone">Handphone</button>
                                                                     </div>
                                                                     <div class="col-lg-6">
-                                                                        <h6 class="font-weight-bold" <?= $color_black?>>Laptop</h6>
-                                                                        <div class="form-group">
-                                                                            <input type="text" name="merek" placeholder="Merek" class="form-control text-center">
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <input type="text" name="seri" placeholder="Seri" class="form-control text-center">
-                                                                        </div>
+                                                                        <button class="btn btn-link btn-sm font-weight-bold" <?= $color_black?> type="button" data-toggle="collapse" data-target="#laptop" aria-expanded="false" aria-controls="laptop">Laptop</button>
                                                                     </div>
                                                                 </div>
-                                                                <div class='form-group'>
+                                                                <div class="collapse" id="handphone">
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="type" placeholder="Type" class="form-control text-center">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="seri" placeholder="Seri" class="form-control text-center">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="imei" placeholder="Imei" class="form-control text-center">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="collapse" id="laptop">
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="merek" placeholder="Merek" class="form-control text-center">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="seri" placeholder="Seri" class="form-control text-center">
+                                                                    </div>
+                                                                </div>
+                                                                <div class='form-group mt-3'>
                                                                     <input type="text" name="kerusakan" placeholder="Kerusakan" class="form-control text-center" required>
                                                                     <small class="text-danger">Wajib*</small>
                                                                 </div>
@@ -107,10 +112,11 @@
                                                                 <div class='form-group'>
                                                                     <select name="id-teknisi" class="form-control" required>
                                                                         <option>Pilih teknisi</option>
-                                                                        <?php ?>
-                                                                            <option value=""></option>
-                                                                        <?php ?>
+                                                                        <?php foreach($users_teknisi as $row_teknisi):?>
+                                                                            <option value="<?= $row_teknisi['id_user']?>"><?= $row_teknisi['first_name']?></option>
+                                                                        <?php endforeach;?>
                                                                     </select>   
+                                                                    <small class="text-danger">Wajib*</small>
                                                                 </div>
                                                                 <div class='form-group'>
                                                                     <label for="tgl-ambil">Tgl Ambil</label>
@@ -118,9 +124,11 @@
                                                                 </div>
                                                                 <div class='form-group'>
                                                                     <input type="number" name="dp" placeholder="DP" class="form-control text-center">
+                                                                    <small class="text-info">Jika ada nota dp!</small>
                                                                 </div>
                                                                 <div class='form-group'>
                                                                     <input type="number" name="biaya" placeholder="Biaya" class="form-control text-center" required>
+                                                                    <small class="text-danger">Wajib*</small>
                                                                 </div>
                                                                 <div class='form-group'>
                                                                     <button type="submit" name="submit-notes" class="btn btn-sm" <?= $bg_black?>>Apply</button>
@@ -132,178 +140,212 @@
                                             </div>
                                         <!-- == view data table today == -->
                                             <div class="col-lg-8">
-                                                <div class="card card-body border-0 shadow mt-3" style="overflow-x: auto">
+                                                <div class="card webkit card-body border-0 shadow mt-3" style="overflow-x: auto;">
+                                                    <h4 class="text-center" <?= $color_black?>>Data Hari Ini</h4>
                                                     <table class="table table-sm text-center" <?= $color_black?>>
                                                         <thead>
-                                                            <tr>
+                                                            <tr style="border-top:hidden">
                                                                 <th scope="col">#</th>
-                                                                <th scope="col">First</th>
-                                                                <th scope="col">Last</th>
-                                                                <th scope="col">Handle</th>
+                                                                <th scope="col">#Nota Tinggal</th>
+                                                                <th scope="col">#Nota DP</th>
+                                                                <th scope="col">QR/Barcode</th>
+                                                                <th scope="col">Client</th>
+                                                                <th scope="col">Layanan</th>
+                                                                <th scope="col">Teknisi</th>
+                                                                <th scope="col">Status</th>
+                                                                <?php if($_SESSION['id-role']<=2){?>
+                                                                <th scope="col">Waktu Status</th>
+                                                                <?php }?>
+                                                                <th scope="col">Tgl Masuk</th>
+                                                                <?php if($_SESSION['id-role']<=2){?>
+                                                                <th scope="col">Waktu Masuk</th>
+                                                                <?php }?>
+                                                                <th scope="col">Tgl Ambil</th>
+                                                                <th scope="col">Kerusakan</th>
+                                                                <th scope="col">Kondisi</th>
+                                                                <th scope="col">Kelengkapan</th>
+                                                                <th scope="col">DP</th>
+                                                                <th scope="col">Biaya</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            <?php $no=1; if(mysqli_num_rows($notes_views_today)==0){?>
                                                             <tr>
-                                                                <th scope="row">1</th>
-                                                                <td>Mark</td>
-                                                                <td>Otto</td>
-                                                                <td>@mdo</td>
+                                                                <th colspan="15">Belum ada data yang dimasukan hari ini!</th>
                                                             </tr>
+                                                            <?php }else if(mysqli_num_rows($notes_views_today)>0){while($row_today=mysqli_fetch_assoc($notes_views_today)){?>
+                                                            <tr>
+                                                                <th scope="row"><?= $no;?></th>
+                                                                <td>T<?= $row_today['id_nota_tinggal']?></td>
+                                                                <td>DP<?= $row_today['id_nota_dp']?></td>
+                                                                <td><a href="qr?auth=<?= $row_today['id_user']?>" class="nav-link" <?= $color_black?>><i class="fas fa-qrcode"></i></a></td>
+                                                                <td>
+                                                                    <div class="dropdown no-arrow">
+                                                                        <button class="btn btn-link btn-sm dropdown-toggle" <?= $color_black?> type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-eye"></i> <?= $row_today['first_name']?></button>
+                                                                        <div class="dropdown-menu p-2 border-0 shadow text-center" <?= $color_black?> aria-labelledby="dropdownMenuButton">
+                                                                            <p>Nama Depan: <?= $row_today['first_name']?></p>
+                                                                            <p>Nama Belakang: <?= $row_today['last_name']?></p>
+                                                                            <p>No. Tlpn: <?= $row_today['phone']?></p>
+                                                                            <p>Email: <?= $row_today['email']?></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <?php $id_barang=$row_today['id_barang']; if($row_today['id_layanan']==1){
+                                                                    $handphone=mysqli_query($conn, "SELECT * FROM handphone WHERE id_hp='$id_barang'");foreach($handphone as $row_hp):?>
+                                                                    <td>
+                                                                        <div class="dropdown no-arrow">
+                                                                            <button class="btn btn-link btn-sm dropdown-toggle" <?= $color_black?> type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-eye"></i> <?= $row_today['product']?></button>
+                                                                            <div class="dropdown-menu p-2 border-0 shadow text-center" <?= $color_black?> aria-labelledby="dropdownMenuButton">
+                                                                                <p>Type: <?= $row_hp['type']?></p>
+                                                                                <p>Seri: <?= $row_hp['seri']?></p>
+                                                                                <p>Imei: <?= $row_hp['imei']?></p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                <?php endforeach;}if($row_today['id_layanan']==2){
+                                                                    $laptop=mysqli_query($conn, "SELECT * FROM laptop WHERE id_laptop='$id_barang'");foreach($laptop as $row_laptop):?>
+                                                                    <td>
+                                                                        <div class="dropdown no-arrow">
+                                                                            <button class="btn btn-link btn-sm dropdown-toggle" <?= $color_black?> type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-eye"></i> <?= $row_today['product']?></button>
+                                                                            <div class="dropdown-menu p-2 border-0 shadow text-center" <?= $color_black?> aria-labelledby="dropdownMenuButton">
+                                                                                <p>Type: <?= $row_laptop['merek']?></p>
+                                                                                <p>Seri: <?= $row_laptop['seri']?></p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                <?php endforeach;}?>
+                                                                <td><?php $id_tek=$row_today['id_pegawai'];
+                                                                    $teknisi=mysqli_query($conn, "SELECT * FROM users WHERE id_user='$id_tek'");foreach($teknisi as $row_tek){echo $row_tek['first_name'];}?></td>
+                                                                <td><?= $row_today['status']?></td>
+                                                                <?php if($_SESSION['id-role']<=2){?>
+                                                                <td><?= $row_today['time_status']?></td>
+                                                                <?php }?>
+                                                                <td><?= $row_today['tgl_masuk']?></td>
+                                                                <?php if($_SESSION['id-role']<=2){?>
+                                                                <td><?= $row_today['time']?></td>
+                                                                <?php }?>
+                                                                <td><?= $row_today['tgl_ambil']?></td>
+                                                                <td><?= $row_today['kerusakan']?></td>
+                                                                <td><?= $row_today['kondisi']?></td>
+                                                                <td><?= $row_today['kelengkapan']?></td>
+                                                                <td>Rp. <?= number_format($row_today['dp'])?></td>
+                                                                <td>Rp. <?= number_format($row_today['biaya'])?></td>
+                                                            </tr>
+                                                            <?php $no++; }}?>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 m-0 p-0">
-                                    <div class="card card-body border-0 shadow mt-3 mb-5" style="overflow-x: auto">
-                                        <!-- <table class="table table-sm text-center" <?= $color_black?>>
-                                            <thead>
-                                                <tr style="border-top:hidden">
-                                                    <th scope="col">No</th>
-                                                    <th scope="col">Data encrypt</th>
-                                                    <th scope="col">Icon</th>
-                                                    <th scope="col">Nama depan</th>
-                                                    <th scope="col">Nama belakang</th>
-                                                    <th scope="col">Email</th>
-                                                    <th scope="col">Kategori Layanan</th>
-                                                    <th scope="col">No. hp/tlp</th>
-                                                    <th scope="col">Alamat</th>
-                                                    <th scope="col">Kode pos</th>
-                                                    <th scope="col">Kebijakan</th>
-                                                    <th scope="col">Role</th>
-                                                    <th scope="col">Status</th>
-                                                    <th scope="col">Akses</th>
-                                                    <th scope="col">Tgl Buat</th>
-                                                    <?php if($_SESSION['id-access']==1){?>
-                                                    <th colspan="1">Aksi</th>
-                                                    <?php }?>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php $no=1;?>
-                                                <?php if(mysqli_num_rows($users_data)==0){?>
-                                                    <tr>
-                                                        <th colspan="16">Maaf data users masih kosong.</th>
+                                <!-- == query data all == -->
+                                    <div class="col-md-12 m-0 p-0">
+                                        <div class="card card-body border-0 shadow mt-3 mb-5" style="overflow-x: auto">
+                                            <table class="table table-sm text-center" <?= $color_black?>>
+                                                <thead>
+                                                    <tr style="border-top:hidden">
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">#Nota Tinggal</th>
+                                                        <th scope="col">#Nota DP</th>
+                                                        <th scope="col">QR/Barcode</th>
+                                                        <th scope="col">Client</th>
+                                                        <th scope="col">Layanan</th>
+                                                        <th scope="col">Teknisi</th>
+                                                        <th scope="col">Status</th>
+                                                        <th scope="col">Tgl Masuk</th>
+                                                        <th scope="col">Tgl Ambil</th>
+                                                        <th scope="col">Kerusakan</th>
+                                                        <th scope="col">Kondisi</th>
+                                                        <th scope="col">Kelengkapan</th>
+                                                        <th scope="col">DP</th>
+                                                        <th scope="col">Biaya</th>
                                                     </tr>
-                                                <?php }else if(mysqli_num_rows($users_data)>0){while($row=mysqli_fetch_assoc($users_data)){?>
+                                                </thead>
+                                                <tbody>
+                                                    <?php $no=1; if(mysqli_num_rows($notes_views_all)==0){?>
+                                                    <tr>
+                                                        <th colspan="15">Belum ada data yang dimasukan hari ini!</th>
+                                                    </tr>
+                                                    <?php }else if(mysqli_num_rows($notes_views_all)>0){while($row_all=mysqli_fetch_assoc($notes_views_all)){?>
                                                     <tr>
                                                         <th scope="row"><?= $no;?></th>
-                                                        <td scope="row"><?= $row['data_encrypt'];?></td>
-                                                        <td scope="row"><img src="../Assets/img/img-users/<?= $row['img']?>" alt="icon profile" class="rounded-circle" style="width: 40px"></td>
-                                                        <td scope="row"><?= $row['first_name']?></td>
-                                                        <td scope="row"><?= $row['last_name']?></td>
-                                                        <td scope="row"><?= $row['email']?></td>
-                                                        <td scope="row"><?= $row['product']?></td>
-                                                        <td scope="row"><?= $row['phone']?></td>
-                                                        <td scope="row"><?= $row['address']?></td>
-                                                        <td scope="row"><?= $row['postal']?></td>
-                                                        <td scope="row"><?= $row['kebijakan']?></td>
-                                                        <td scope="row">
+                                                        <td>T<?= $row_all['id_nota_tinggal']?></td>
+                                                        <td>DP<?= $row_all['id_nota_dp']?></td>
+                                                        <td><a href="qr?auth=<?= $row_all['id_user']?>" class="nav-link" <?= $color_black?>><i class="fas fa-qrcode"></i></a></td>
+                                                        <td>
                                                             <div class="dropdown no-arrow">
-                                                                <button class="btn btn-link btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-pen"></i> <?= $row['role']?></button>
-                                                                <?php if($_SESSION['id-access']==1){?>
-                                                                <div class="dropdown-menu p-2 border-0 shadow text-center" aria-labelledby="dropdownMenuButton">
-                                                                    <form action="" method="POST">
-                                                                        <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
-                                                                        <div class="form-group">
-                                                                            <select name="id-role" class="form-control" required>
-                                                                                <option>Pilih role</option>
-                                                                                <?php foreach($users_data_role as $row_role):?>
-                                                                                <option value="<?= $row_role['id_role']?>"><?= $row_role['role']?></option>
-                                                                                <?php endforeach;?>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <button type="submit" name="edit-role-user" <?= $style_btn;?> class="btn btn-sm" <?= $bg_black?>>Apply</button>
-                                                                        </div>
-                                                                    </form>
+                                                                <button class="btn btn-link btn-sm dropdown-toggle" <?= $color_black?> type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-eye"></i> <?= $row_all['first_name']?></button>
+                                                                <div class="dropdown-menu p-2 border-0 shadow text-center" <?= $color_black?> aria-labelledby="dropdownMenuButton">
+                                                                    <p>Nama Depan: <?= $row_all['first_name']?></p>
+                                                                    <p>Nama Belakang: <?= $row_all['last_name']?></p>
+                                                                    <p>No. Tlpn: <?= $row_all['phone']?></p>
+                                                                    <p>Email: <?= $row_all['email']?></p>
                                                                 </div>
-                                                                <?php }?>
                                                             </div>
                                                         </td>
-                                                        <td scope="row">
-                                                            <div class="dropdown no-arrow">
-                                                                <button class="btn btn-link btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-pen"></i> <?= $row['status']?></button>
-                                                                <?php if($_SESSION['id-access']==1){?>
-                                                                <div class="dropdown-menu p-2 border-0 shadow text-center" aria-labelledby="dropdownMenuButton">
-                                                                    <form action="" method="POST">
-                                                                        <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
-                                                                        <div class="form-group">
-                                                                            <select name="is-active" class="form-control" required>
-                                                                                <option>Pilih status</option>
-                                                                                <?php foreach($users_data_status as $row_status):?>
-                                                                                <option value="<?= $row_status['is_active']?>"><?= $row_status['status']?></option>
-                                                                                <?php endforeach;?>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <button type="submit" name="edit-status-user" <?= $style_btn;?> class="btn btn-sm" <?= $bg_black?>>Apply</button>
-                                                                        </div>
-                                                                    </form>
+                                                        <?php $id_barang=$row_all['id_barang']; if($row_all['id_layanan']==1){
+                                                            $handphone=mysqli_query($conn, "SELECT * FROM handphone WHERE id_hp='$id_barang'");foreach($handphone as $row_hp):?>
+                                                            <td>
+                                                                <div class="dropdown no-arrow">
+                                                                    <button class="btn btn-link btn-sm dropdown-toggle" <?= $color_black?> type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-eye"></i> <?= $row_all['product']?></button>
+                                                                    <div class="dropdown-menu p-2 border-0 shadow text-center" <?= $color_black?> aria-labelledby="dropdownMenuButton">
+                                                                        <p>Type: <?= $row_hp['type']?></p>
+                                                                        <p>Seri: <?= $row_hp['seri']?></p>
+                                                                        <p>Imei: <?= $row_hp['imei']?></p>
+                                                                    </div>
                                                                 </div>
-                                                                <?php }?>
-                                                            </div>
-                                                        </td>
-                                                        <td scope="row">
-                                                            <div class="dropdown no-arrow">
-                                                                <button class="btn btn-link btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-pen"></i> <?= $row['access']?></button>
-                                                                <?php if($_SESSION['id-access']==1){?>
-                                                                <div class="dropdown-menu p-2 border-0 shadow text-center" aria-labelledby="dropdownMenuButton">
-                                                                    <form action="" method="POST">
-                                                                        <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
-                                                                        <div class="form-group">
-                                                                            <select name="id-access" class="form-control" required>
-                                                                                <option>Pilih access</option>
-                                                                                <?php foreach($users_data_access as $row_access):?>
-                                                                                <option value="<?= $row_access['id_access']?>"><?= $row_access['access']?></option>
-                                                                                <?php endforeach;?>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <button type="submit" name="edit-access-user" <?= $style_btn;?> class="btn btn-sm" <?= $bg_black?>>Apply</button>
-                                                                        </div>
-                                                                    </form>
+                                                            </td>
+                                                        <?php endforeach;}if($row_all['id_layanan']==2){
+                                                            $laptop=mysqli_query($conn, "SELECT * FROM laptop WHERE id_laptop='$id_barang'");foreach($laptop as $row_laptop):?>
+                                                            <td>
+                                                                <div class="dropdown no-arrow">
+                                                                    <button class="btn btn-link btn-sm dropdown-toggle" <?= $color_black?> type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-eye"></i> <?= $row_all['product']?></button>
+                                                                    <div class="dropdown-menu p-2 border-0 shadow text-center" <?= $color_black?> aria-labelledby="dropdownMenuButton">
+                                                                        <p>Type: <?= $row_laptop['merek']?></p>
+                                                                        <p>Seri: <?= $row_laptop['seri']?></p>
+                                                                    </div>
                                                                 </div>
-                                                                <?php }?>
-                                                            </div>
-                                                        </td>
-                                                        <td scope="row"><?= $row['date_created']?></td>
-                                                        <?php if($_SESSION['id-access']==1){?>
-                                                        <td><form action="" method="POST">
-                                                            <input type="hidden" name="id-user" value="<?= $row['id_user'];?>">
-                                                            <button type="submit" name="delete-user" class="btn btn-danger btn-sm shadow"><i class="fas fa-trash"></i> Hapus</button>
-                                                        </form></td>
-                                                        <?php }?>
+                                                            </td>
+                                                        <?php endforeach;}?>
+                                                        <td><?php $id_tek=$row_all['id_pegawai'];
+                                                            $teknisi=mysqli_query($conn, "SELECT * FROM users WHERE id_user='$id_tek'");foreach($teknisi as $row_tek){echo $row_tek['first_name'];}?></td>
+                                                        <td><?= $row_all['status']?></td>
+                                                        <td><?= $row_all['tgl_masuk']?></td>
+                                                        <td><?= $row_all['tgl_ambil']?></td>
+                                                        <td><?= $row_all['kerusakan']?></td>
+                                                        <td><?= $row_all['kondisi']?></td>
+                                                        <td><?= $row_all['kelengkapan']?></td>
+                                                        <td>Rp. <?= number_format($row_all['dp'])?></td>
+                                                        <td>Rp. <?= number_format($row_all['biaya'])?></td>
                                                     </tr>
-                                                <?php $no++; }}?>
-                                            </tbody>
-                                        </table>
-                                        <nav class="small" aria-label="Page navigation example">
-                                            <ul class="pagination justify-content-center">
-                                                <?php if(isset($page5)){if(isset($total_page5)){if($page5>1):?>
-                                                <li class="page-item shadow">
-                                                    <a class="page-link border-0" <?= $bg_black?> href="users?page=<?= $page5-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
-                                                </li>
-                                                <?php endif;?>
-                                                <?php for($i=1; $i<=$total_page5; $i++):?>
-                                                    <?php if($i<=5):?>
-                                                        <?php if($i==$page5):?>
-                                                            <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="users?page=<?= $i;?>"><?= $i;?></a></li>
-                                                        <?php else :?>
-                                                            <li class="page-item shadow"><a class="page-link border-0" href="users?page=<?= $i;?>"><?= $i;?></a></li>
-                                                        <?php endif;?>
+                                                    <?php $no++; }}?>
+                                                </tbody>
+                                            </table>
+                                            <nav class="small" aria-label="Page navigation example">
+                                                <ul class="pagination justify-content-center">
+                                                    <?php if(isset($page7)){if(isset($total_page7)){if($page7>1):?>
+                                                    <li class="page-item shadow">
+                                                        <a class="page-link border-0" <?= $bg_black?> href="notes?page=<?= $page7-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
+                                                    </li>
                                                     <?php endif;?>
-                                                <?php endfor;?>
-                                                <?php if($page5<$total_page5):?>
-                                                <li class="page-item shadow">
-                                                    <a class="page-link border-0" <?= $bg_black?> href="users?page=<?= $page5+1;?>">Next</a>
-                                                </li>
-                                                <?php endif;}}?>
-                                            </ul>
-                                        </nav> -->
+                                                    <?php for($i=1; $i<=$total_page7; $i++):?>
+                                                        <?php if($i<=5):?>
+                                                            <?php if($i==$page7):?>
+                                                                <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="notes?page=<?= $i;?>"><?= $i;?></a></li>
+                                                            <?php else :?>
+                                                                <li class="page-item shadow"><a class="page-link border-0" href="notes?page=<?= $i;?>"><?= $i;?></a></li>
+                                                            <?php endif;?>
+                                                        <?php endif;?>
+                                                    <?php endfor;?>
+                                                    <?php if($page7<$total_page7):?>
+                                                    <li class="page-item shadow">
+                                                        <a class="page-link border-0" <?= $bg_black?> href="notes?page=<?= $page7+1;?>">Next</a>
+                                                    </li>
+                                                    <?php endif;}}?>
+                                                </ul>
+                                            </nav>
+                                        </div>
                                     </div>
-                                </div>
                             </div>
                     </div>
                 </div>

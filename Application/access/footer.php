@@ -5,7 +5,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="footer-col copyright">
-                            <p class="small comfortaa <?php if(empty($_SESSION['page-name'])){?>text-light<?php }?>">Copyright © <?= date('Y');?> UGD HP - All rights reserved</p>
+                            <p class="small comfortaa <?php if(empty($_SESSION['page-name'])){?>text-light<?php }?>">Create with <span style="color: #e25555;">&#9829;</span> by Arlan Butar Butar</p>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -41,7 +41,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="footer-col copyright">
-                            <p class="small comfortaa text-light">Copyright © <?= date('Y');?> UGD HP - All rights reserved</p>
+                            <p class="small comfortaa text-light">Create with <span style="color: #e25555;">&#9829;</span> by Arlan Butar Butar</p>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -75,7 +75,7 @@
                 <footer class="sticky-footer bg-white">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto color-black">
-                            <span <?= $color_black?>>Create with <span style="color: #e25555;">&#9829;</span> by Arlan Butar Butar | Copyright &copy; UGD HP <?= date('Y') ?></span>
+                            <span <?= $color_black?>>Create with <span style="color: #e25555;">&#9829;</span> by Arlan Butar Butar</span>
                         </div>
                     </div>
                 </footer>
@@ -116,7 +116,7 @@
                 var myPieChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: ["Developer", "Designer", "Code Reviewer", "Not Available"],
+                        labels: ["Handphone", "Laptop", "Website", "Not Available"],
                         datasets: [{
                             data: [<?= $row_cal_handphone?>, <?= $row_cal_laptop?>, <?= $row_cal_website?>, <?= $row_cal_available?>],
                             backgroundColor: ['#55CE12', '#12CE8B', '#1255CE', '#A3C813'],

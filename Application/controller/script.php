@@ -113,6 +113,7 @@ require_once("connect.php");require_once("functions.php");
             $bg_black = 'style="background: #000;color: #fff;"';
             $logout='../Application/controller/logout';
             $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $_SESSION['id-user']))));
+            $today=date('Y-m-d');
         // => role selection
             if($_SESSION['id-role']<=6){ // => all administrator | == Dashboard
                 $user_views_profile=mysqli_query($conn, "SELECT * FROM users WHERE id_user='$id_user'");
@@ -130,7 +131,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category 
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE tg_cari='$today'
+                    WHERE tgl_cari='$today'
                 ");
                 $cal_handphone=mysqli_query($conn, "SELECT * FROM notes WHERE id_layanan=1");
                 $row_cal_handphone=mysqli_num_rows($cal_handphone);
@@ -398,7 +399,26 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: setting-nota");exit;
                     }
                 }
-                $category_services=mysqli_query($conn, "SELECT * FROM category_services");
+                $notes_views_today=mysqli_query($conn, "SELECT * FROM notes
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE tgl_cari='$today' AND id_nota=1 OR id_nota=2
+                ");
+                $data7=25;
+                $result7=mysqli_query($conn, "SELECT * FROM notes");
+                $total7=mysqli_num_rows($result7);
+                $total_page7=ceil($total7/$data7);
+                $page7=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data7=($data7*$page7)-$data7;
+                $notes_views_all=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE id_nota=1 OR id_nota=2
+                    LIMIT $awal_data7, $data7
+                ");
+                $category_services=mysqli_query($conn, "SELECT * FROM category_services WHERE id_category<=2");
                 $users_teknisi=mysqli_query($conn, "SELECT * FROM users WHERE id_role=4");
                 if(isset($_POST['submit-notes'])){
                     if(notes($_POST)>0){
@@ -406,8 +426,26 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: nota-tinggal");exit;
                     }
                 }
+                if(isset($_POST['delete-notes'])){
+                    if(delete_notes($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menghapus nomor nota".$_POST['id-nota-tinggal'];
+                        header("Location: nota-tinggal");exit;
+                    }
+                }
+                if(isset($_POST['remake-barcode'])){
+                    if(remake_barcode($_POST)>0){
+                        $_SESSION['message-success']="Berhasil membuat ulang barcode";
+                        header("Location: qr?auth=".$_POST['id-user']);exit;
+                    }
+                }
             }
-            if($_SESSION['id-role']<=4 || $_SESSION['id-role']==5){ // => teknisi & web dev/des
+            if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
+                if(isset($_POST['edit-notes'])){
+                    if(edit_notes($_POST)>0){
+                        $_SESSION['message-success']="Berhasil mengubah nomor nota".$_POST['id-nota-tinggal'];
+                        header("Location: nota-tinggal");exit;
+                    }
+                }
             }
             if($_SESSION['id-role']<=6){ // => web client services
             }
