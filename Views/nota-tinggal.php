@@ -31,6 +31,7 @@
                                 <div class="col-md-12 m-0 p-0">
                                     <div class="row flex-row-reverse">
                                         <!-- == insert data == -->
+                                            <?php if($_SESSION['id-role']<=3){?>
                                             <div class="col-lg-4">
                                                 <div class="card card-body border-0 shadow mt-3 text-center">
                                                     <h4 class="font-weight-bold" <?= $color_black?>>Masukan Data</h4>
@@ -138,8 +139,13 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <?php }?>
                                         <!-- == view data table today == -->
+                                            <?php if($_SESSION['id-role']<=3){?>
                                             <div class="col-lg-8">
+                                            <?php }if($_SESSION['id-role']==4){?>
+                                            <div class="col-lg-12">
+                                            <?php }?>
                                                 <div class="card webkit card-body border-0 shadow mt-3" style="overflow-x: auto;">
                                                     <h4 class="text-center" <?= $color_black?>>Data Hari Ini</h4>
                                                     <table class="table table-sm text-center" <?= $color_black?>>

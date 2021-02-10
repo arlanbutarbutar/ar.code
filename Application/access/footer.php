@@ -72,7 +72,7 @@
             </div>
         </footer>
     <?php }else if($_SESSION['id-role']<=6){?>
-                <footer class="sticky-footer bg-white">
+                <footer class="sticky-footer bg-white mt-5">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto color-black">
                             <span <?= $color_black?>>Create with <span style="color: #e25555;">&#9829;</span> by Arlan Butar Butar</span>

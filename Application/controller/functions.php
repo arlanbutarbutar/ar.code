@@ -761,14 +761,253 @@
                         }
                         return $fileName;
                     }
+                    function notes_cancel($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Merubah status nota user #".$id_user." menjadi Cancel";
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET id_nota='4', id_status='2', tgl_cancel='$date', tgl_status='$date', time_status='$time', progress='0' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function notes_pending($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Merubah status nota user #".$id_user." menjadi Pending";
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET id_nota='1', id_status='1', tgl_status='$date', time_status='$time', progress='10' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function edit_notes($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $nota_tinggal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['nota-tinggal']))));
+                        $check_tinggal=mysqli_query($conn, "SELECT * FROM notes WHERE id_nota_tinggal='$nota_tinggal'");
+                        if(mysqli_num_rows($check_tinggal)>0){
+                            $notes_type_tinggal=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota Tinggal%'");
+                            $row_notes_type_tinggal=mysqli_fetch_assoc($notes_type_tinggal);
+                            $no_nota_tinggal=$row_notes_type_tinggal['no_nota'];
+                            if($nota_tinggal==$no_nota_tinggal || $nota_tinggal>$no_nota_tinggal){
+                                $_SESSION['message-danger']="Nomor nota tinggal saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota tinggal!";
+                                header("Location: nota-tinggal");return false;
+                            }else{
+                                $_SESSION['message-danger']="Nomor nota tinggal yang kamu masukan sudah ada, cek kembali!";
+                                header("Location: nota-tinggal");return false;
+                            }
+                        }else if(mysqli_num_rows($check_tinggal)==0){
+                            $notes_type_tinggal=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota Tinggal%'");
+                            $row_notes_type_tinggal=mysqli_fetch_assoc($notes_type_tinggal);
+                            $no_nota_tinggal=$row_notes_type_tinggal['no_nota'];
+                            if($nota_tinggal==$no_nota_tinggal || $nota_tinggal>$no_nota_tinggal){
+                                $_SESSION['message-danger']="Nomor nota tinggal yang kamu masukan saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota tinggal!";
+                                header("Location: nota-tinggal");return false;
+                            }
+                        }
+                        if(!empty($data['nota-dp'])){
+                            $nota_dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['nota-dp']))));
+                            $check_dp=mysqli_query($conn, "SELECT * FROM notes WHERE id_nota_dp='$nota_dp'");
+                            if(mysqli_num_rows($check_dp)>0){
+                                $notes_type_dp=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota DP%'");
+                                $row_notes_type_dp=mysqli_fetch_assoc($notes_type_dp);
+                                $no_nota_dp=$row_notes_type_dp['no_nota'];
+                                if($nota_dp==$no_nota_dp || $nota_dp>$no_nota_dp){
+                                    $_SESSION['message-danger']="Nomor nota dp yang kamu masukan saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota dp!";
+                                    header("Location: nota-tinggal");return false;
+                                }else{
+                                    $_SESSION['message-danger']="Nomor nota dp yang kamu masukan sudah ada, cek kembali!";
+                                    header("Location: nota-tinggal");return false;
+                                }
+                            }else if(mysqli_num_rows($check_dp)==0){
+                                $notes_type_dp=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota DP%'");
+                                $row_notes_type_dp=mysqli_fetch_assoc($notes_type_dp);
+                                $no_nota_dp=$row_notes_type_dp['no_nota'];
+                                if($nota_dp==$no_nota_dp || $nota_dp>$no_nota_dp){
+                                    $_SESSION['message-danger']="Nomor nota dp yang kamu masukan saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota dp!";
+                                    header("Location: nota-tinggal");return false;
+                                }
+                            }
+                        }else if(empty($data['nota-dp'])){
+                            $nota_dp="-";
+                        }
+                        if(!empty($data['nota-dp'])){
+                            if(empty($data['dp']) || $data['dp']==0){
+                                $_SESSION['message-danger']="Kamu belum memasukan uang muka atau DP sementara nomor DP ada, sialakan cek lagi!";
+                                header("Location: nota-tinggal");return false;
+                            }
+                        }
+                        $username=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['username']))));
+                        $tlpn=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['tlpn']))));
+                        if(!empty($data['email'])){
+                            $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['email']))));
+                            $password=$email;
+                        }else if(empty($data['email'])){
+                            $email=$tlpn;
+                            $password=$email;
+                        }
+                        if(!empty($data['alamat'])){
+                            $alamat=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['alamat']))));
+                        }else if(empty($data['alamat'])){
+                            $alamat='-';
+                        }
+                        $id_layanan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-layanan']))));
+                        if($id_layanan==1){
+                            $type=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['type']))));
+                            $seri=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['seri']))));
+                            $imei=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['imei']))));
+                        }else if($id_layanan==2){
+                            $merek=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['merek']))));
+                            $seri=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['seri']))));
+                        }
+                        $kerusakan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kerusakan']))));
+                        if(!empty($data['kondisi'])){
+                            $kondisi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kondisi']))));
+                        }else if(empty($data['kondisi'])){
+                            $kondisi="-";
+                        }
+                        if(!empty($data['kelengkapan'])){
+                            $kelengkapan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['kelengkapan']))));
+                        }else if(empty($data['kelengkapan'])){
+                            $kelengkapan="-";
+                        }
+                        $id_teknisi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-teknisi']))));
+                        $tgl_cari=date('Y-m-d');
+                        if(!empty($data['tgl-ambil'])){
+                            $tgl_ambil=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['tgl-ambil']))));
+                        }else if(empty($data['tgl-ambil'])){
+                            $tgl_ambil="-";
+                        }
+                        if(!empty($data['dp'])){
+                            $dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['dp']))));
+                        }else if(empty($data['dp'])){
+                            $dp=0;
+                        }
+                        $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['biaya']))));
+                        if($biaya<=10000){
+                            $_SESSION['message-danger']="Pastikan anda memasukan biaya dengan benar!";
+                            header("Location: nota-tinggal");return false;
+                        }
+                        $barcode=barcode_notes($data_encrypt);
+                        $id_log=$_SESSION['id-log'];
+                        $log="Menambahkan nota tinggal dengan nomor nota ".$nota_tinggal;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "INSERT INTO users(id_user,data_encrypt,first_name,email,password,phone,address,kebijakan) VALUES('$id_user','$data_encrypt','$username','$email','$password','$tlpn','$alamat','-')");
+                        if($id_layanan==1){
+                            mysqli_query($conn, "INSERT INTO handphone(id_hp,type,seri,imei) VALUES('$id_barang','$type','$seri','$imei')");
+                        }else if($id_layanan==2){
+                            mysqli_query($conn, "INSERT INTO laptop(id_laptop,merek,seri) VALUES('$id_barang','$merek','$seri')");
+                        }
+                        mysqli_query($conn, "INSERT INTO notes(id_nota_tinggal,id_nota_dp,id_user,id_layanan,id_barang,id_pegawai,tgl_cari,tgl_masuk,tgl_status,tgl_ambil,time,kerusakan,kondisi,kelengkapan,dp,biaya,barcode) VALUES('$nota_tinggal','$nota_dp','$id_user','$id_layanan','$id_barang','$id_teknisi','$date_search','$date','$date','$tgl_ambil','$time','$kerusakan','$kondisi','$kelengkapan','$dp','$biaya','$barcode')");
+                        return mysqli_affected_rows($conn);
+                    }
                     function delete_notes($data){global $conn,$time,$date;
                         $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Menghapus nota user #".$id_user;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        if($data['id-layanan']==1){
+                            mysqli_query($conn, "DELETE FROM handphone WHERE id_hp='$id_user'");
+                        }else if($data['id-layanan']==2){
+                            mysqli_query($conn, "DELETE FROM laptop WHERE id_laptop='$id_user'");
+                        }
+                        mysqli_query($conn, "DELETE FROM notes WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function notes_report($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $data_encrypt=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['data-encrypt']))));
+                        $nota_lunas=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['nota-lunas']))));
+                        $check_lunas=mysqli_query($conn, "SELECT * FROM notes WHERE id_nota_lunas='$nota_lunas'");
+                        if(mysqli_num_rows($check_lunas)>0){
+                            $notes_type_lunas=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota Lunas%'");
+                            $row_notes_type_lunas=mysqli_fetch_assoc($notes_type_lunas);
+                            $no_nota_lunas=$row_notes_type_lunas['no_nota'];
+                            if($nota_lunas==$no_nota_lunas || $nota_lunas>$no_nota_lunas){
+                                $_SESSION['message-danger']="Nomor nota lunas saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota lunas!";
+                                header("Location: qr-aksi?auth=".$data_encrypt);return false;
+                            }else{
+                                $_SESSION['message-danger']="Nomor nota lunas yang kamu masukan sudah ada, cek kembali!";
+                                header("Location: qr-aksi?auth=".$data_encrypt);return false;
+                            }
+                        }else if(mysqli_num_rows($check_lunas)==0){
+                            $notes_type_lunas=mysqli_query($conn, "SELECT * FROM notes_type WHERE name LIKE '%Nota Lunas%'");
+                            $row_notes_type_lunas=mysqli_fetch_assoc($notes_type_lunas);
+                            $no_nota_lunas=$row_notes_type_lunas['no_nota'];
+                            if($nota_lunas==$no_nota_lunas || $nota_lunas>$no_nota_lunas){
+                                $_SESSION['message-danger']="Nomor nota lunas yang kamu masukan saat ini telah mencapai batas maksimum cetak, silakan cetak nota dan jika sudah segera setting ulang nomor nota lunas!";
+                                header("Location: qr-aksi?auth=".$data_encrypt);return false;
+                            }
+                        }
+                        if($data['id-nota']==4){
+                            $garansi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['garansi']))));
+                        }else if($data['id-nota']==5){
+                            $garansi="GARANSI TERPAKAI";
+                        }
+                        $ket=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['ket']))));
+                        if(!empty($ket)){
+                            $ket_img=ket_img($data_encrypt);
+                            if(!$ket_img){
+                                return false;
+                            }
+                        }
+                        $id_log=$_SESSION['id-log'];
+                        $log="Nota dimasukan ke laporan";
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET id_nota='5', id_status='6', tgl_laporan='$date', tgl_status='$date', id_nota_lunas='$nota_lunas', garansi='$garansi', ket_text='$ket', ket_img='$ket_img' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function ket_img($data_encrypt){
+                        $namaFile=$_FILES["ket-img"]["name"];
+                        $ukuranFile=$_FILES["ket-img"]["size"];
+                        $tmpName=$_FILES["ket-img"]["tmp_name"];
+                        $ekstensiGambarValid=['jpg','jpeg','png'];
+                        $ekstensiGambar=explode('.',$namaFile);
+                        $ekstensiGambar=strtolower(end($ekstensiGambar));
+                        if(!in_array($ekstensiGambar,$ekstensiGambarValid)){
+                            $_SESSION['message-danger']="Maaf, bukan gambar!";
+                            header("Location: ../Views/qr-aksi?auth=".$data_encrypt);
+                            return false;
+                        }
+                        if($ukuranFile>2000000){
+                            $_SESSION['message-danger']="Maaf, ukuran gambar terlalu besar! (2MB)";
+                            header("Location: ../Views/qr-aksi?auth=".$data_encrypt);
+                            return false;
+                        }
+                        $verifyPhoto=$data_encrypt.".jpg";
+                        move_uploaded_file($tmpName,'../Assets/img/img-notes/'.$verifyPhoto);
+                        return $verifyPhoto;
+                    }
+                    function notes_garansi($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Melakukan perbaikan ulang dari garansi client.";
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET id_status='1', tgl_status='$date', garansi='GARANSI TERPAKAI', progress='10' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
                     }
                     // function blank__($data){global $conn,$time,$date;}
                 }
                 if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
-                    function edit_notes($data){global $conn,$time,$date;
-                        $id_data=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-data']))));
+                    function notes_progress($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Merubah status nota user #".$id_user." menjadi On Progress";
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET id_status='3', tgl_status='$date', time_status='$time', progress='50' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function notes_waiting($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Merubah status nota user #".$id_user." menjadi Waiting to be taken";
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET id_status='4', tgl_ambil='$date', tgl_status='$date', time_status='$time', progress='75' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function notes_success($data){global $conn,$time,$date;
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Merubah status nota user #".$id_user." menjadi Finish/Success";
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE notes SET id_nota='3', id_status='5', tgl_lunas='$date', tgl_status='$date', time_status='$time', progress='100' WHERE id_user='$id_user'");
+                        return mysqli_affected_rows($conn);
                     }
                     // function blank__($data){global $conn,$time,$date;}
                 }
@@ -783,472 +1022,6 @@
             if(isset($_SESSION['id-role'])){
                 if($_SESSION['id-role']<13){
                     
-                    function nota_tinggal($add){global $conn, $time, $akses_hp, $akses_laptop;
-                        require_once('../assets/vendor/autoload.php');
-                        $auto_nota=mysqli_query($conn, "SELECT * FROM autorisasi_nomor_nota");
-                        $row_auto=mysqli_fetch_assoc($auto_nota);
-                        $id_auto=$row_auto['id_auto'];
-                        $id_auto_status=$row_auto['id_status'];
-                        // require_once('nota-auto.php');
-                        require_once('nota-manual.php');
-                        $id_nota_tinggal="T".$id_nota_tinggal;
-                        $id_nota_dp="DP".$id_nota_dp;
-                        $cek_idUser=mysqli_query($conn, "SELECT * FROM users_local ORDER BY id_user DESC LIMIT 1");
-                        $loop_idUser=mysqli_fetch_assoc($cek_idUser);
-                        if(isset($loop_idUser['id_user'])){
-                            $idUser=$loop_idUser['id_user'];
-                            $id_user=$idUser+1;
-                        }else if(!isset($loop_idUser['id_user'])){
-                            $id_user=202027;
-                        }
-                        $username=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['username']))));
-                        $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['email']))));
-                        $users_local=mysqli_query($conn, "SELECT * FROM users_local WHERE email_user='$email'");
-                        $tlpn=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['tlpn']))));
-                        $alamat=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['alamat']))));
-                        $tgl_masuk=date('l, d M Y');
-                        $tgl_cari=date('Y-m-d');
-                        $id_layanan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['id-layanan']))));
-                        $kerusakan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['kerusakan']))));
-                        $kondisi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['kondisi']))));
-                        $kelengkapan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['kelengkapan']))));
-                        $id_teknisi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['id-teknisi']))));
-                        $id_status=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['id-status']))));
-                        $tgl_status=date('l, d M Y');
-                        $tgl_ambil=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['tgl-ambil']))));
-                        $dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['dp']))));
-                        $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['biaya']))));
-                        $id_barang=$id_user;
-                        if($id_layanan==1){
-                            $type=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['type']))));
-                            $seri_hp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['seri-hp']))));
-                            $imei=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['imei']))));
-                        }else if($id_layanan==2){
-                            $merek=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['merek']))));
-                            $seri_laptop=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['seri-laptop']))));
-                        }
-                        $nota_tinggal=mysqli_query($conn, "SELECT * FROM nota_tinggal WHERE id_nota_tinggal='$id_nota_tinggal'");
-                        if(mysqli_num_rows($nota_tinggal)>0){
-                            $_SESSION['message-danger']="Maaf, nomor nota sudah ada!";
-                            require_once("form-data.php");
-                            $_SESSION['show']=3;
-                            header("Location: nota-tinggal");return false;
-                        }
-                        if(!empty($email)){
-                            if(mysqli_num_rows($users_local)>0){
-                                $_SESSION['message-info']="Heii, Email User telah terpakai. Tetap akan mengirimkan pesan ke email: ".$email;
-                            }
-                        }
-                        if(empty($id_layanan)){
-                            $_SESSION['message-danger']="Maaf, anda belum memilih layanan!";
-                            require_once("form-data.php");
-                            $_SESSION['show']=3;
-                            header("Location: nota-tinggal");return false;
-                        }else if(!empty($id_layanan)){
-                            if($id_layanan==1){
-                                if(empty($type)){
-                                    $_SESSION['message-danger']="Maaf, anda belum mengisi type handphone!";
-                                    require_once("form-data.php");
-                                    $_SESSION['show']=3;
-                                    header("Location: nota-tinggal");return false;
-                                }
-                                if(empty($seri_hp)){
-                                    $_SESSION['message-danger']="Maaf, anda belum mengisi seri handphone!";
-                                    require_once("form-data.php");
-                                    $_SESSION['show']=3;
-                                    header("Location: nota-tinggal");return false;
-                                }
-                                if(empty($imei)){
-                                    $_SESSION['message-warning']="Ingat untuk memasukan IMEI Handphone!";
-                                    $_SESSION['show']=3;
-                                }
-                            }else if($id_layanan==2){
-                                if(empty($merek)){
-                                    $_SESSION['message-danger']="Maaf, anda belum mengisi merek laptop!";
-                                    require_once("form-data.php");
-                                    $_SESSION['show']=3;
-                                    header("Location: nota-tinggal");return false;
-                                }
-                                if(empty($seri_laptop)){
-                                    $_SESSION['message-danger']="Maaf, anda belum mengisi seri laptop!";
-                                    require_once("form-data.php");
-                                    $_SESSION['show']=3;
-                                    header("Location: nota-tinggal");return false;
-                                }
-                            }
-                        }
-                        if(empty($id_teknisi)){
-                            $_SESSION['message-danger']="Maaf, anda belum memilih teknisi!";
-                            require_once("form-data.php");
-                            $_SESSION['show']=3;
-                            header("Location: nota-tinggal");return false;
-                        }
-                        if(empty($id_status)){
-                            $_SESSION['message-danger']="Maaf, anda belum memilih status!";
-                            require_once("form-data.php");
-                            $_SESSION['show']=3;
-                            header("Location: nota-tinggal");return false;
-                        }
-                        if($biaya<=10000){
-                            $_SESSION['message-danger']="Maaf, pastikan anda memasukan biaya dengan benar!";
-                            require_once("form-data.php");
-                            $_SESSION['show']=3;
-                            header("Location: nota-tinggal");return false;
-                        }
-                        if($id_auto==2){
-                            if($id_auto_status==1){
-                                if($dp>0){
-                                    $check_nota_dp=count($add['check-nota-dp']);
-                                    if($check_nota_dp==1){
-                                        $_SESSION['message-danger']="Maaf, anda belum menceklist nota dp!";
-                                        require_once("form-data.php");
-                                        $_SESSION['show']=3;
-                                        header("Location: nota-tinggal");return false;
-                                    }
-                                }
-                            }else if($id_auto_status==2){
-                                if($dp>0){
-                                    if(empty($id_nota_dp)){
-                                        $_SESSION['message-danger']="Maaf, anda belum mengisi nomor nota dp!";
-                                        require_once("form-data.php");
-                                        $_SESSION['show']=3;
-                                        header("Location: nota-tinggal");return false;
-                                    }
-                                }
-                            }
-                        }
-                        $barcode=barcode_nota_tinggal($id_user);
-                        $barcode_hash=password_hash($barcode, PASSWORD_DEFAULT);
-                        mysqli_query($conn, "INSERT INTO users_local VALUES('$id_user','$username','$email','$tlpn','$alamat')");
-                        if($id_layanan==1){
-                            mysqli_query($conn, "INSERT INTO handphone VALUES('$id_barang','$akses_hp','$type','$seri_hp','$imei')");
-                        }else if($id_layanan==2){
-                            mysqli_query($conn, "INSERT INTO laptop VALUES('$id_barang','$akses_laptop','$merek','$seri_laptop')");
-                        }
-                        $id_log=$_SESSION['id-log'];
-                        $log="Menambahkan nota tinggal dengan nomor nota ".$id_nota_tinggal." http://ugdhp.com/qr?ac=1&id=".$id_nota_tinggal;
-                        $date_log=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        if(!empty($email)){
-                            require "mail-send.php";
-                            $to       = $email;
-                            $subject  = 'QR Nota Tinggal';
-                            $message  = '
-                                <div style="margin: 0; padding: 0;">
-                                    <p>Silakan scan QR berikut untuk melalukan pengecekan status barang:</p><br>
-                                    <a href="https://www.ugdhp.com/qr?ac=1&id=".$id_nota_tinggal" style="font-weight: bold">'.$barcode_hash.'</a>
-                                    <p>Kode ini bersifat rahasia jangan berikan kepada siapapun itu. Baca juga peraturan kebijakan layanan kami di
-                                        <a href="https://www.ugdhp.com/terms-conditions" style="text-decoration: none;">disini</a>
-                                    </p>
-                                </div>';
-                            smtp_mail($to, $subject, $message, '', '', 0, 0, true);
-                        }
-                        $Bar = new Picqer\Barcode\BarcodeGeneratorHTML();
-                        $qrbatang = $Bar->getBarcode($id_nota_tinggal, $Bar::TYPE_CODE_128);
-                        if($dp>0){
-                            mysqli_query($conn, "INSERT INTO laporan_dp(id_nota_tinggal,id_nota_dp,id_user,tgl_masuk,tgl_cari,id_layanan,id_barang,kerusakan,id_pegawai,dp,time) VALUES('$id_nota_tinggal','$id_nota_dp','$id_user','$tgl_masuk','$tgl_cari','$id_layanan','$id_barang','$kerusakan','$id_teknisi','$dp','$time')");
-                            mysqli_query($conn, "INSERT INTO nota_tinggal(id_nota_tinggal,id_nota_dp,id_user,tgl_masuk,tgl_cari,id_layanan,id_barang,kerusakan,kondisi,kelengkapan,id_pegawai,id_status,tgl_status,tgl_ambil,dp,biaya,time,barcode,qrbatang) VALUES('$id_nota_tinggal','$id_nota_dp','$id_user','$tgl_masuk','$tgl_cari','$id_layanan','$id_barang','$kerusakan','$kondisi','$kelengkapan','$id_teknisi','$id_status','$tgl_status','$tgl_ambil','$dp','$biaya','$time','$barcode','$qrbatang')");
-                        }else{
-                            mysqli_query($conn, "INSERT INTO nota_tinggal(id_nota_tinggal,id_user,tgl_masuk,tgl_cari,id_layanan,id_barang,kerusakan,kondisi,kelengkapan,id_pegawai,id_status,tgl_status,tgl_ambil,biaya,time,barcode,qrbatang) VALUES('$id_nota_tinggal','$id_user','$tgl_masuk','$tgl_cari','$id_layanan','$id_barang','$kerusakan','$kondisi','$kelengkapan','$id_teknisi','$id_status','$tgl_status','$tgl_ambil','$biaya','$time','$barcode','$qrbatang')");
-                        }
-                        return mysqli_affected_rows($conn);
-                    }
-                    function barcode_nota_tinggal($id_user){
-                        require_once('../assets/phpqrcode/qrlib.php');
-                        $qrvalue = "https://www.ugdhp.com/qr?ac=".$id_user;
-                        $tempDir = "../assets/img/img-barcode-modern/";
-                        $codeContents = $qrvalue;
-                        $fileName = $id_user.".png";
-                        $pngAbsoluteFilePath = $tempDir.$fileName;
-                        if(!file_exists($pngAbsoluteFilePath)){
-                            QRcode::png($codeContents, $pngAbsoluteFilePath);
-                        }
-                        return $fileName;
-                    }
-                    function edit_status_nota($edit){global $conn, $time, $akses_hp, $akses_laptop;
-                        $id_nota_tinggal=addslashes(trim(mysqli_real_escape_string($conn, $edit['id-nota-tinggal'])));
-                        $id_nota_dp=addslashes(trim(mysqli_real_escape_string($conn, $edit['id-nota-dp'])));
-                        $id_layanan=addslashes(trim(mysqli_real_escape_string($conn, $edit['id-layanan'])));
-                        $id_status=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-status']))));
-                        $tgl_status=date('l, d M Y');
-                        $services_status_ugdhp=mysqli_query($conn, "SELECT * FROM services_status_ugdhp WHERE id_status='$id_status'");
-                        $row=mysqli_fetch_assoc($services_status_ugdhp);
-                        $status=$row['status'];;
-                        if(empty($id_status)){
-                            $_SESSION['message-warning']="Maaf, anda belum memilih status nota tinggal!";
-                            $_SESSION['show']=2;
-                            header("Location: nota-tinggal");
-                            return false;
-                        }else if($id_status==0){
-                            $_SESSION['message-warning']="Maaf, anda belum memilih status nota tinggal!";
-                            $_SESSION['show']=2;
-                            header("Location: nota-tinggal");
-                            return false;
-                        }
-                        $id_log=$_SESSION['id-log'];
-                        $log="Mengedit status nota dengan nomor nota tinggal ".$id_nota_tinggal." dan nomor nota dp ".$id_nota_dp." dengan status ".$status.".";
-                        $date_log=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        if($id_status==2){
-                            $nota_tinggal=mysqli_query($conn, "SELECT * FROM nota_tinggal WHERE id_nota_tinggal='$id_nota_tinggal'");
-                            $row=mysqli_fetch_assoc($nota_tinggal);
-                            $id_user=$row['id_user'];
-                            $tgl_masuk=$row['tgl_masuk'];
-                            $tgl_cari=$row['tgl_cari'];
-                            $id_layanan=$row['id_layanan'];
-                            $id_barang=$row['id_barang'];
-                            $kerusakan=$row['kerusakan'];
-                            $kondisi=$row['kondisi'];
-                            $kelengkapan=$row['kelengkapan'];
-                            $id_pegawai=$row['id_pegawai'];
-                            $id_status=2;
-                            $tgl_ambil=$row['tgl_ambil'];
-                            $dp=$row['dp'];
-                            $biaya=$row['biaya'];
-                            $time=$row['time'];
-                            $barcode=$row['barcode'];
-                            $qrbatang=$row['qrbatang'];
-                            mysqli_query($conn, "INSERT INTO nota_cancel(id_nota_tinggal,id_nota_dp,id_user,tgl_masuk,tgl_cari,id_layanan,id_barang,kerusakan,kondisi,kelengkapan,id_pegawai,id_status,tgl_status,tgl_ambil,dp,biaya,time,barcode,qrbatang) VALUES('$id_nota_tinggal','$id_nota_dp','$id_user','$tgl_masuk','$tgl_cari','$id_layanan','$id_barang','$kerusakan','$kondisi','$kelengkapan','$id_pegawai','$id_status','$tgl_status','$tgl_ambil','$dp','$biaya','$time','$barcode','$qrbatang')");
-                            mysqli_query($conn, "DELETE FROM nota_tinggal WHERE id_nota_tinggal='$id_nota_tinggal'");
-                            return mysqli_affected_rows($conn);
-                        }else{
-                            mysqli_query($conn, "UPDATE nota_tinggal SET id_status='$id_status', tgl_status='$tgl_status' WHERE id_nota_tinggal='$id_nota_tinggal'");
-                            return mysqli_affected_rows($conn);
-                        }
-                    }
-                    function edit_nota($edit){global $conn, $time, $link_log;
-                        $id_nota_tinggal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-nota-tinggal']))));
-                        $id_nota_dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-nota-dp']))));
-                        $nota_tinggal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['nota-tinggal']))));
-                        $nota_dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['nota-dp']))));
-                        $id_layanan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-layanan']))));
-                        $id_barang=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-barang']))));
-                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-user']))));
-                        if($nota_tinggal>0){
-                            $cek_nota_tinggal=mysqli_query($conn, "SELECT * FROM nota_tinggal WHERE id_nota_tinggal='$nota_tinggal'");
-                            if(mysqli_num_rows($cek_nota_tinggal)>0){
-                                $_SESSION['message-danger']="Maaf, nomor nota tinggal sudah ada!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                        }if($nota_dp>0){
-                            $cek_nota_dp=mysqli_query($conn, "SELECT * FROM nota_tinggal WHERE id_nota_dp='$nota_dp'");
-                            if(mysqli_num_rows($cek_nota_dp)>0){
-                                $_SESSION['message-danger']="Maaf, nomor nota dp sudah ada!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                        }
-                        $username=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['username']))));
-                        $email=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['email-user']))));
-                        $users_local=mysqli_query($conn, "SELECT * FROM users_local WHERE email_user='$email'");
-                        $tlpn=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['tlpn-user']))));
-                        $alamat=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['alamat-user']))));
-                        $kerusakan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['kerusakan']))));
-                        $kondisi=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['kondisi']))));
-                        $kelengkapan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['kelengkapan']))));
-                        $id_pegawai=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-teknisi']))));
-                        $tgl_ambil=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['tgl-ambil']))));
-                        $dp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['dp']))));
-                        $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['biaya']))));
-                        if($id_layanan==1){
-                            $type=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['type']))));
-                            $seri_hp=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['seri-hp']))));
-                            $imei=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['imei']))));
-                        }else if($id_layanan==2){
-                            $merek=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['merek']))));
-                            $seri_laptop=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['seri-laptop']))));
-                        }
-                        if(!empty($email)){
-                            if(mysqli_num_rows($users_local)>0){
-                                $_SESSION['message-danger']="Maaf, email user telah terpakai. Silakan isi ulang email user!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                        }
-                        if($id_layanan==1){
-                            if(empty($type)){
-                                $_SESSION['message-danger']="Maaf, anda belum mengisi type handphone!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                            if(empty($seri_hp)){
-                                $_SESSION['message-danger']="Maaf, anda belum mengisi seri handphone!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                            if(empty($imei)){
-                                $_SESSION['message-warning']="Ingat untuk memasukan IMEI Handphone!";
-                                $_SESSION['show']=2;
-                            }
-                        }else if($id_layanan==2){
-                            if(empty($merek)){
-                                $_SESSION['message-danger']="Maaf, anda belum mengisi merek laptop!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                            if(empty($seri_laptop)){
-                                $_SESSION['message-danger']="Maaf, anda belum mengisi seri laptop!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                        }
-                        if(empty($id_pegawai)){
-                            $_SESSION['message-danger']="Maaf, anda belum memilih teknisi!";
-                            $_SESSION['show']=2;
-                            header("Location: nota-tinggal");
-                            return false;
-                        }
-                        if($biaya<=10000){
-                            $_SESSION['message-danger']="Maaf, pastikan anda memasukan biaya dengan benar!";
-                            $_SESSION['show']=2;
-                            header("Location: nota-tinggal");
-                            return false;
-                        }
-                        if($dp>0){
-                            if(empty($id_nota_dp)){
-                                $_SESSION['message-danger']="Maaf, anda belum mengisi nomor nota dp!";
-                                $_SESSION['show']=2;
-                                header("Location: nota-tinggal");
-                                return false;
-                            }
-                        }
-                        if($id_layanan==1){
-                            mysqli_query($conn, "UPDATE handphone SET type='$type', seri='$seri_hp', imei='$imei' WHERE id_hp='$id_barang'");
-                        }else if($id_layanan==2){
-                            mysqli_query($conn, "UPDATE laptop SET merek='$merek', seri='$seri_laptop' WHERE id_laptop='$id_barang'");
-                        }
-                        $id_log=$_SESSION['id-log'];
-                        $log="Mengedit nota tinggal dengan nomor nota ".$id_nota_tinggal;
-                        $date_log=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        if($nota_tinggal>0){
-                            if($nota_dp>0){
-                                mysqli_query($conn, "UPDATE nota_tinggal SET id_nota_tinggal='$nota_tinggal', id_nota_dp='$nota_dp', kerusakan='$kerusakan', kondisi='$kondisi', kelengkapan='$kelengkapan', id_pegawai='$id_pegawai', tgl_ambil='$tgl_ambil', dp='$dp', biaya='$biaya' WHERE id_nota_tinggal='$id_nota_tinggal'");
-                                if(!empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', email_user='$email', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }else if(empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }
-                            }else if($nota_dp==0){
-                                mysqli_query($conn, "UPDATE nota_tinggal SET id_nota_tinggal='$nota_tinggal', kerusakan='$kerusakan', kondisi='$kondisi', kelengkapan='$kelengkapan', id_pegawai='$id_pegawai', tgl_ambil='$tgl_ambil', dp='$dp', biaya='$biaya' WHERE id_nota_tinggal='$id_nota_tinggal'");
-                                if(!empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', email_user='$email', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }else if(empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }
-                            }
-                        }else if($nota_tinggal==0){
-                            if($nota_dp>0){
-                                mysqli_query($conn, "UPDATE nota_tinggal SET id_nota_dp='$nota_dp', kerusakan='$kerusakan', kondisi='$kondisi', kelengkapan='$kelengkapan', id_pegawai='$id_pegawai', tgl_ambil='$tgl_ambil', dp='$dp', biaya='$biaya' WHERE id_nota_tinggal='$id_nota_tinggal'");
-                                if(!empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', email_user='$email', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }else if(empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }
-                            }else if($nota_dp==0){
-                                mysqli_query($conn, "UPDATE nota_tinggal SET kerusakan='$kerusakan', kondisi='$kondisi', kelengkapan='$kelengkapan', id_pegawai='$id_pegawai', tgl_ambil='$tgl_ambil', dp='$dp', biaya='$biaya' WHERE id_nota_tinggal='$id_nota_tinggal'");
-                                if(!empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', email_user='$email', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }else if(empty($email)){
-                                    mysqli_query($conn, "UPDATE users_local SET username='$username', tlpn_user='$tlpn', alamat_user='$alamat' WHERE id_user='$id_user'");
-                                    return mysqli_affected_rows($conn);
-                                }
-                            }
-                        }
-                    }
-                    function delete_nota($del){global $conn, $time, $link_log;
-                        $id_nota_tinggal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-nota-tinggal']))));
-                        $id_barang=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-barang']))));
-                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-user']))));
-                        $id_layanan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-layanan']))));
-                        $barcode=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['barcode']))));
-                        $id_log=$_SESSION['id-log'];
-                        $log="Menghapus nota tinggal dengan nomor nota ".$id_nota_tinggal;
-                        $date_log=date('l, d M Y');
-                        $files2=glob("../assets/img/img-barcode-modern/".$barcode);
-                        foreach($files2 as $file){
-                            if(is_file($file)){
-                                unlink($file);
-                            }
-                        }
-                        if($id_layanan==1){
-                            mysqli_query($conn, "DELETE FROM handphone WHERE id_hp='$id_barang'");
-                        }else if($id_layanan==2){
-                            mysqli_query($conn, "DELETE FROM laptop WHERE id_laptop='$id_barang'");
-                        }
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        mysqli_query($conn, "DELETE FROM nota_tinggal WHERE id_nota_tinggal='$id_nota_tinggal'");
-                        mysqli_query($conn, "DELETE FROM users_local WHERE id_user='$id_user'");
-                        return mysqli_affected_rows($conn);
-                    }
-                    function recovery_nota($reco){global $conn, $time;
-                        $id_nota_tinggal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $reco['id-nota-tinggal']))));
-                        $nota_cancel=mysqli_query($conn, "SELECT * FROM nota_cancel WHERE id_nota_tinggal='$id_nota_tinggal'");
-                        $row=mysqli_fetch_assoc($nota_cancel);
-                        $id_nota_dp=$row['id_nota_dp'];
-                        $id_user=$row['id_user'];
-                        $tgl_masuk=$row['tgl_masuk'];
-                        $tgl_cari=$row['tgl_cari'];
-                        $id_layanan=$row['id_layanan'];
-                        $id_barang=$row['id_barang'];
-                        $kerusakan=$row['kerusakan'];
-                        $kondisi=$row['kondisi'];
-                        $kelengkapan=$row['kelengkapan'];
-                        $id_pegawai=$row['id_pegawai'];
-                        $id_status=1;
-                        $tgl_status=date('l, d M Y');
-                        $tgl_ambil=$row['tgl_ambil'];
-                        $dp=$row['dp'];
-                        $biaya=$row['biaya'];
-                        $time=$row['time'];
-                        $barcode=$row['barcode'];
-                        $qrbatang=$row['qrbatang'];
-                        $id_log=$_SESSION['id-log'];
-                        $log="Re-covery nota cancel dengan nomor nota ".$id_nota_tinggal." ke nota tinggal atau dp.";
-                        $date_log=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        mysqli_query($conn, "INSERT INTO nota_tinggal(id_nota_tinggal,id_nota_dp,id_user,tgl_masuk,tgl_cari,id_layanan,id_barang,kerusakan,kondisi,kelengkapan,id_pegawai,id_status,tgl_status,tgl_ambil,dp,biaya,time,barcode,qrbatang) VALUES('$id_nota_tinggal','$id_nota_dp','$id_user','$tgl_masuk','$tgl_cari','$id_layanan','$id_barang','$kerusakan','$kondisi','$kelengkapan','$id_pegawai','$id_status','$tgl_status','$tgl_ambil','$dp','$biaya','$time','$barcode','$qrbatang')");
-                        mysqli_query($conn, "DELETE FROM nota_cancel WHERE id_nota_tinggal='$id_nota_tinggal'");
-                        return mysqli_affected_rows($conn);
-                    }
-                    function delete_nota_cancel($del){global $conn, $time;
-                        $id_nota_tinggal=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-nota-tinggal']))));
-                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-user']))));
-                        $id_layanan=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-layanan']))));
-                        $barcode=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['barcode']))));
-                        $id_log=$_SESSION['id-log'];
-                        $log="Menghapus nota cancel dengan nomor nota ".$id_nota_tinggal;
-                        $date_log=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        $files2=glob("../assets/img/img-barcode-modern/".$barcode);
-                        foreach($files2 as $file){
-                            if(is_file($file))
-                            unlink($file);
-                        }
-                        if($id_layanan==1){
-                            mysqli_query($conn, "DELETE FROM handphone WHERE id_hp='$id_nota_tinggal'");
-                        }else if($id_layanan==2){
-                            mysqli_query($conn, "DELETE FROM laptop WHERE id_laptop='$id_nota_tinggal'");
-                        }
-                        mysqli_query($conn, "DELETE FROM nota_cancel WHERE id_nota_tingal='$id_nota_tinggal'");
-                        mysqli_query($conn, "DELETE FROM users_local WHERE id_user='$id_user'");
-                        return mysqli_affected_rows($conn);
-                    }
                     function add_lunas_from_tinggal($add){global $conn, $time;
                         $id_nota_lunas=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['id-nota-lunas']))));
                         $nota_lunas=mysqli_query($conn, "SELECT * FROM nota_lunas WHERE id_nota_lunas='$id_nota_lunas'");

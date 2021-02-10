@@ -426,24 +426,66 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: nota-tinggal");exit;
                     }
                 }
-                if(isset($_POST['delete-notes'])){
-                    if(delete_notes($_POST)>0){
-                        $_SESSION['message-success']="Berhasil menghapus nomor nota".$_POST['id-nota-tinggal'];
-                        header("Location: nota-tinggal");exit;
-                    }
-                }
                 if(isset($_POST['remake-barcode'])){
                     if(remake_barcode($_POST)>0){
                         $_SESSION['message-success']="Berhasil membuat ulang barcode";
                         header("Location: qr?auth=".$_POST['id-user']);exit;
                     }
                 }
-            }
-            if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
+                if(isset($_POST['cancel-notes'])){
+                    if(notes_cancel($_POST)>0){
+                        $_SESSION['message-success']="Nota telah dibatalkan untuk perbaikan";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
+                if(isset($_POST['ubah-status-pending'])){
+                    if(notes_pending($_POST)>0){
+                        $_SESSION['message-success']="Nota berhasil masukan ke antrian perbaikan";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
                 if(isset($_POST['edit-notes'])){
                     if(edit_notes($_POST)>0){
-                        $_SESSION['message-success']="Berhasil mengubah nomor nota".$_POST['id-nota-tinggal'];
+                        $_SESSION['message-success']="Berhasil mengubah nota";
                         header("Location: nota-tinggal");exit;
+                    }
+                }
+                if(isset($_POST['delete-notes'])){
+                    if(delete_notes($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menghapus nota";
+                        header("Location: nota-tinggal");exit;
+                    }
+                }
+                if(isset($_POST['submit-report'])){
+                    if(notes_report($_POST)>0){
+                        $_SESSION['message-success']="Nota berhasil dimasukan ke laporan harian";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
+                if(isset($_POST['submit-garansi'])){
+                    if(notes_garansi($_POST)>0){
+                        $_SESSION['message-success']="Garansi berhasil dipakai untuk perbaikan ulang.";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
+            }
+            if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
+                if(isset($_POST['ubah-status-progress'])){
+                    if(notes_progress($_POST)>0){
+                        $_SESSION['message-success']="Status nota telah On Progress";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
+                if(isset($_POST['ubah-status-waiting'])){
+                    if(notes_waiting($_POST)>0){
+                        $_SESSION['message-success']="Status nota menunggu pengambilan client";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
+                if(isset($_POST['ubah-status-success'])){
+                    if(notes_success($_POST)>0){
+                        $_SESSION['message-success']="Status nota telah success atau selesai diperbaiki";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
                     }
                 }
             }
