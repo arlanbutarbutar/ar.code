@@ -2,7 +2,7 @@
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/session/redirect-access-visitor.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="- Nota Tinggal";
+    $_SESSION['page-name']="Nota Tinggal";
 ?>
 
 <!-- == nota tinggal page == -->
@@ -20,7 +20,7 @@
                     <div class="container-fluid">
                         <!-- == Page Heading == -->
                             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1 class="h3 mb-0" <?= $color_black ?>>Nota Tinggal</h1>
+                                <h1 class="h3 mb-0" <?= $color_black ?>><?= $_SESSION['page-name']?></h1>
                             </div>
                         <!-- == Content Info == -->
                             <div class="row">
@@ -86,7 +86,7 @@
                                                                         <input type="text" name="type" placeholder="Type" class="form-control text-center">
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <input type="text" name="seri" placeholder="Seri" class="form-control text-center">
+                                                                        <input type="text" name="seri-hp" placeholder="Seri" class="form-control text-center">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <input type="text" name="imei" placeholder="Imei" class="form-control text-center">
@@ -97,7 +97,7 @@
                                                                         <input type="text" name="merek" placeholder="Merek" class="form-control text-center">
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <input type="text" name="seri" placeholder="Seri" class="form-control text-center">
+                                                                        <input type="text" name="seri-laptop" placeholder="Seri" class="form-control text-center">
                                                                     </div>
                                                                 </div>
                                                                 <div class='form-group mt-3'>
@@ -331,21 +331,21 @@
                                                 <ul class="pagination justify-content-center">
                                                     <?php if(isset($page7)){if(isset($total_page7)){if($page7>1):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="notes?page=<?= $page7-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="nota-tinggal?page=<?= $page7-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
                                                     </li>
                                                     <?php endif;?>
                                                     <?php for($i=1; $i<=$total_page7; $i++):?>
                                                         <?php if($i<=5):?>
                                                             <?php if($i==$page7):?>
-                                                                <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="notes?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="nota-tinggal?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php else :?>
-                                                                <li class="page-item shadow"><a class="page-link border-0" href="notes?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                <li class="page-item shadow"><a class="page-link border-0" href="nota-tinggal?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php endif;?>
                                                         <?php endif;?>
                                                     <?php endfor;?>
                                                     <?php if($page7<$total_page7):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="notes?page=<?= $page7+1;?>">Next</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="nota-tinggal?page=<?= $page7+1;?>">Next</a>
                                                     </li>
                                                     <?php endif;}}?>
                                                 </ul>

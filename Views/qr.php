@@ -1,15 +1,19 @@
 <?php if(!isset($_SESSION)){session_start();}
-    if(!isset($_GET['auth'])){
-        if($_SESSION['page-name']=="- Dashboard"){
+    if(!isset($_GET['auth']) || empty($_GET['auth'])){
+        if($_SESSION['page-name']=="Dashboard"){
             header("Location: dashboard");exit;
-        }else if($_SESSION['page-name']=="- Nota Tinggal"){
+        }else if($_SESSION['page-name']=="Nota Tinggal"){
             header("Location: nota-tinggal");exit;
+        }else if($_SESSION['page-name']=="Nota Lunas"){
+            header("Location: nota-lunas");exit;
+        }else if($_SESSION['page-name']=="Nota Batal"){
+            header("Location: nota-cancel");exit;
         }
     }
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/session/redirect-access-visitor.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="- QR";
+    $_SESSION['page-name']="QR";
     if(isset($_GET['auth'])){
         $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $_GET['auth']))));
         $notes_qr=mysqli_query($conn, "SELECT * FROM notes
@@ -36,7 +40,7 @@
                     <div class="container-fluid">
                         <!-- == Page Heading == -->
                             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1 class="h3 mb-0" <?= $color_black ?>>QR</h1>
+                                <h1 class="h3 mb-0" <?= $color_black ?>><?= $_SESSION['page-name']?></h1>
                             </div>
                         <!-- == Content Info == -->
                             <div class="row mb-5">
@@ -70,7 +74,7 @@
                                                 <?php }?>
                                             </div>
                                         </div>
-                                        <div class="col-lg-8 mt-3">
+                                        <div class="col-lg-8">
                                             <div class="card card-body border-0 shadow mt-3">
                                                 <h6 class="font-weight-bold" <?= $color_black ?>>Rincian Perbaikan</h6>
                                                 <p <?= $color_black ?>>

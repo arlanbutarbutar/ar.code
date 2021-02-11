@@ -1,8 +1,10 @@
 <?php if(!isset($_SESSION)){session_start();}
     require_once("../Application/session/redirect-user.php");
+    require_once("../Application/session/redirect-access-full.php");
+    require_once("../Application/session/redirect-access-users.php");
     require_once("../Application/session/redirect-access-visitor.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="-";
+    $_SESSION['page-name']="- -";
 ?>
 
 <!-- == - page == -->

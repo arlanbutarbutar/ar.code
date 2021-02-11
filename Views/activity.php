@@ -1,7 +1,7 @@
 <?php if(!isset($_SESSION)){session_start();}
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="- Activity Log";
+    $_SESSION['page-name']="Activity Log";
 ?>
 
 <!-- == Activity Log page == -->
@@ -19,7 +19,7 @@
                     <div class="container-fluid">
                         <!-- == Page Heading == -->
                             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1 class="h3 mb-0" <?= $color_black ?>>Activity Log</h1>
+                                <h1 class="h3 mb-0" <?= $color_black ?>><?= $_SESSION['page-name']?></h1>
                             </div>
                         <!-- == Content Info == -->
                             <div class="row">

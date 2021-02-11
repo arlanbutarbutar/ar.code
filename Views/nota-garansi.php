@@ -2,10 +2,10 @@
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/session/redirect-access-visitor.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="Nota Batal";
+    $_SESSION['page-name']="Nota Garansi";
 ?>
 
-<!-- == Nota Batal page == -->
+<!-- == Nota Garansi page == -->
 <!DOCTYPE html>
 <html lang="id">
     <head>
@@ -28,7 +28,7 @@
                                     <div class="col-md-12">
                                         <?php if(isset($message_success)){echo$message_success;}if(isset($message_danger)){echo$message_danger;}if(isset($message_warning)){echo$message_warning;}if(isset($message_info)){echo$message_info;}if(isset($message_dark)){echo$message_dark;}?>
                                     </div>
-                                <!-- == query data all == -->
+                                <!-- == query data == -->
                                     <div class="col-md-12">
                                         <div class="card card-body border-0 shadow mt-3 mb-5" style="overflow-x: auto">
                                             <table class="table table-sm text-center" <?= $color_black?>>
@@ -37,14 +37,21 @@
                                                         <th scope="col">#</th>
                                                         <th scope="col">#Nota Tinggal</th>
                                                         <th scope="col">#Nota DP</th>
+                                                        <th scope="col">#Nota Lunas</th>
                                                         <th scope="col">QR/Barcode</th>
                                                         <th scope="col">Client</th>
                                                         <th scope="col">Layanan</th>
                                                         <th scope="col">Teknisi</th>
                                                         <th scope="col">Status</th>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <th scope="col">Waktu Status</th>
+                                                        <?php }?>
                                                         <th scope="col">Tgl Masuk</th>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <th scope="col">Waktu Masuk</th>
+                                                        <?php }?>
+                                                        <th scope="col">Tgl Lunas</th>
                                                         <th scope="col">Tgl Ambil</th>
-                                                        <th scope="col">Tgl Batal</th>
                                                         <th scope="col">Kerusakan</th>
                                                         <th scope="col">Kondisi</th>
                                                         <th scope="col">Kelengkapan</th>
@@ -53,15 +60,16 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $no=1; if(mysqli_num_rows($notes_cancel)==0){?>
+                                                    <?php $no=1; if(mysqli_num_rows($notes_garansi_views_all)==0){?>
                                                     <tr>
-                                                        <th colspan="15">Belum ada data yang dibatalkan!</th>
+                                                        <th colspan="13">Belum ada data yang dimasukan hari ini!</th>
                                                     </tr>
-                                                    <?php }else if(mysqli_num_rows($notes_cancel)>0){while($row_all=mysqli_fetch_assoc($notes_cancel)){?>
+                                                    <?php }else if(mysqli_num_rows($notes_garansi_views_all)>0){while($row_all=mysqli_fetch_assoc($notes_garansi_views_all)){?>
                                                     <tr>
                                                         <th scope="row"><?= $no;?></th>
                                                         <td>T<?= $row_all['id_nota_tinggal']?></td>
                                                         <td>DP<?= $row_all['id_nota_dp']?></td>
+                                                        <td>L<?= $row_all['id_nota_lunas']?></td>
                                                         <td><a href="qr?auth=<?= $row_all['id_user']?>" class="nav-link" <?= $color_black?>><i class="fas fa-qrcode"></i></a></td>
                                                         <td>
                                                             <div class="dropdown no-arrow">
@@ -101,9 +109,15 @@
                                                         <td><?php $id_tek=$row_all['id_pegawai'];
                                                             $teknisi=mysqli_query($conn, "SELECT * FROM users WHERE id_user='$id_tek'");foreach($teknisi as $row_tek){echo $row_tek['first_name'];}?></td>
                                                         <td><?= $row_all['status']?></td>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <td><?= $row_all['time_status']?></td>
+                                                        <?php }?>
                                                         <td><?= $row_all['tgl_masuk']?></td>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <td><?= $row_all['time']?></td>
+                                                        <?php }?>
+                                                        <td><?= $row_all['tgl_lunas']?></td>
                                                         <td><?= $row_all['tgl_ambil']?></td>
-                                                        <td><?= $row_all['tgl_cancel']?></td>
                                                         <td><?= $row_all['kerusakan']?></td>
                                                         <td><?= $row_all['kondisi']?></td>
                                                         <td><?= $row_all['kelengkapan']?></td>
@@ -115,23 +129,23 @@
                                             </table>
                                             <nav class="small" aria-label="Page navigation example">
                                                 <ul class="pagination justify-content-center">
-                                                    <?php if(isset($page8)){if(isset($total_page8)){if($page8>1):?>
+                                                    <?php if(isset($page11)){if(isset($total_page11)){if($page11>1):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="nota-cancel?page=<?= $page8-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="nota-garansi?page=<?= $page11-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
                                                     </li>
                                                     <?php endif;?>
-                                                    <?php for($i=1; $i<=$total_page8; $i++):?>
+                                                    <?php for($i=1; $i<=$total_page11; $i++):?>
                                                         <?php if($i<=5):?>
-                                                            <?php if($i==$page8):?>
-                                                                <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="nota-cancel?page=<?= $i;?>"><?= $i;?></a></li>
+                                                            <?php if($i==$page11):?>
+                                                                <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="nota-garansi?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php else :?>
-                                                                <li class="page-item shadow"><a class="page-link border-0" href="nota-cancel?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                <li class="page-item shadow"><a class="page-link border-0" href="nota-garansi?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php endif;?>
                                                         <?php endif;?>
                                                     <?php endfor;?>
-                                                    <?php if($page8<$total_page8):?>
+                                                    <?php if($page11<$total_page11):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="nota-cancel?page=<?= $page8+1;?>">Next</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="nota-garansi?page=<?= $page11+1;?>">Next</a>
                                                     </li>
                                                     <?php endif;}}?>
                                                 </ul>

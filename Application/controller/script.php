@@ -322,6 +322,19 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: term-of-service");exit;
                     }
                 }
+                $data10=25;
+                $result10=mysqli_query($conn, "SELECT * FROM notes");
+                $total10=mysqli_num_rows($result10);
+                $total_page10=ceil($total10/$data10);
+                $page10=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data10=($data10*$page10)-$data10;
+                $notes_all=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN notes_type ON notes.id_nota=notes_type.id_nota
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status
+                    LIMIT $awal_data10, $data10
+                ");
             }
             if($_SESSION['id-role']<=3){ // => administrasi
                 $data5=25;
@@ -403,7 +416,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE tgl_cari='$today' AND id_nota=1 OR id_nota=2
+                    WHERE notes.tgl_cari='$today' AND notes.id_nota=1 OR notes.id_nota=2
                 ");
                 $data7=25;
                 $result7=mysqli_query($conn, "SELECT * FROM notes");
@@ -415,7 +428,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE id_nota=1 OR id_nota=2
+                    WHERE notes.id_nota=1 OR notes.id_nota=2
                     LIMIT $awal_data7, $data7
                 ");
                 $category_services=mysqli_query($conn, "SELECT * FROM category_services WHERE id_category<=2");
@@ -447,7 +460,7 @@ require_once("connect.php");require_once("functions.php");
                 if(isset($_POST['edit-notes'])){
                     if(edit_notes($_POST)>0){
                         $_SESSION['message-success']="Berhasil mengubah nota";
-                        header("Location: nota-tinggal");exit;
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
                     }
                 }
                 if(isset($_POST['delete-notes'])){
@@ -468,8 +481,53 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
                     }
                 }
+                $data8=25;
+                $result8=mysqli_query($conn, "SELECT * FROM notes");
+                $total8=mysqli_num_rows($result8);
+                $total_page8=ceil($total8/$data8);
+                $page8=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data8=($data8*$page8)-$data8;
+                $notes_lunas_views_all=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_nota=3
+                    LIMIT $awal_data8, $data8
+                ");
+                if(isset($_POST['submit-notes-lunas'])){
+                    if(notes_lunas($_POST)>0){
+                        $_SESSION['message-success']="Berhasil memasukan nota lunas, data langsung ke laporan harian";
+                        header("Location: nota-lunas");exit;
+                    }
+                }
+                $data9=25;
+                $result9=mysqli_query($conn, "SELECT * FROM notes");
+                $total9=mysqli_num_rows($result9);
+                $total_page9=ceil($total9/$data9);
+                $page9=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data9=($data9*$page9)-$data9;
+                $notes_cancel=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_nota=4
+                    LIMIT $awal_data9, $data9
+                ");
             }
-            if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
+            if($_SESSION['id-role']<=5){ // => lebih kecil sama dengan teknisi & web dev/des
+                $data11=25;
+                $result11=mysqli_query($conn, "SELECT * FROM notes");
+                $total11=mysqli_num_rows($result11);
+                $total_page11=ceil($total11/$data11);
+                $page11=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data11=($data11*$page11)-$data11;
+                $notes_garansi_views_all=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status
+                    WHERE notes.id_nota=5 AND notes.id_status<6
+                    LIMIT $awal_data11, $data11
+                ");
                 if(isset($_POST['ubah-status-progress'])){
                     if(notes_progress($_POST)>0){
                         $_SESSION['message-success']="Status nota telah On Progress";
@@ -488,6 +546,53 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
                     }
                 }
+            }
+            if($_SESSION['id-role']==5){ // => teknisi & web dev/des
+                $notes_views_today=mysqli_query($conn, "SELECT * FROM notes
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.tgl_cari='$today' AND notes.id_pegawai='$id_user' AND notes.id_nota=1 OR notes.id_nota=2
+                ");
+                $data7=25;
+                $result7=mysqli_query($conn, "SELECT * FROM notes");
+                $total7=mysqli_num_rows($result7);
+                $total_page7=ceil($total7/$data7);
+                $page7=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data7=($data7*$page7)-$data7;
+                $notes_views_all=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=1 OR notes.id_nota=2
+                    LIMIT $awal_data7, $data7
+                ");
+                $data8=25;
+                $result8=mysqli_query($conn, "SELECT * FROM notes");
+                $total8=mysqli_num_rows($result8);
+                $total_page8=ceil($total8/$data8);
+                $page8=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data8=($data8*$page8)-$data8;
+                $notes_lunas_views_all=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=3
+                    LIMIT $awal_data8, $data8
+                ");
+                $data9=25;
+                $result9=mysqli_query($conn, "SELECT * FROM notes");
+                $total9=mysqli_num_rows($result9);
+                $total_page9=ceil($total9/$data9);
+                $page9=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data9=($data9*$page9)-$data9;
+                $notes_cancel=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=4
+                    LIMIT $awal_data9, $data9
+                ");
             }
             if($_SESSION['id-role']<=6){ // => web client services
             }

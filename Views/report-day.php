@@ -2,7 +2,7 @@
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/session/redirect-access-visitor.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="-";
+    $_SESSION['page-name']="- -";
 ?>
 
 <!-- == - page == -->

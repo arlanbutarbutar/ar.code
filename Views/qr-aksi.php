@@ -2,7 +2,7 @@
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/session/redirect-access-visitor.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="- QR";
+    $_SESSION['page-name']="QR";
     if(isset($_GET['auth'])){
         $data_encrypt=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $_GET['auth']))));
         $notes_qr=mysqli_query($conn, "SELECT * FROM notes
@@ -29,7 +29,7 @@
                     <div class="container-fluid">
                         <!-- == Page Heading == -->
                             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1 class="h3 mb-0" <?= $color_black ?>>QR</h1>
+                                <h1 class="h3 mb-0" <?= $color_black ?>><?= $_SESSION['page-name']?></h1>
                             </div>
                         <!-- == Content Info == -->
                             <div class="row">
@@ -89,10 +89,11 @@
                                                         <!-- == ubah status == -->
                                                             <div class="card card-body shadow border-0 mt-3 text-center">
                                                                 <p <?= $color_black ?>>Status saat ini <?= $row['status']?>, lakukan perubahan status jika ingin melanjutkan. Tekan tombol dibawah ini untuk merubah status.</p>
-                                                                <form action="" method="POST">
+                                                                <form action="" method="POST" enctype="multipart/form-data">
                                                                     <div class="form-group">
                                                                         <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
                                                                         <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
+                                                                        <input type="hidden" name="id-nota" value="<?= $row['id_nota']?>">
                                                                         <?php $id_status=$row['id_status'];if($id_status==1){?>
                                                                             <button type="submit" name="ubah-status-progress" class="btn btn-warning btn-sm">On Progress</button>
                                                                         <?php }else if($id_status==2){if($_SESSION['id-role']<=3){?>
@@ -105,33 +106,30 @@
                                                                             <button class="btn btn-success btn-sm" type="button" data-toggle="collapse" data-target="#collapse-report" aria-expanded="false" aria-controls="collapse-report">Report</button>
                                                                             <div class="collapse" id="collapse-report">
                                                                                 <div class="card card-body border-0 m-0 p-0 mt-3">
-                                                                                    <form action="" method="POST" enctype="multipart/form-data">
-                                                                                        <input type="hidden" name="id-nota" value="<?= $row['id_nota']?>">
-                                                                                        <div class="form-group">
-                                                                                            <label for="nota-lunas" <?= $color_black?>>Nota Lunas <small class="text-danger">wajib*</small></label>
-                                                                                            <input type="number" name="nota-lunas" id="nota-lunas" placeholder="Nota Lunas" class="form-control" required>
+                                                                                    <div class="form-group">
+                                                                                        <label for="nota-lunas" <?= $color_black?>>Nota Lunas <small class="text-danger">wajib*</small></label>
+                                                                                        <input type="number" name="nota-lunas" id="nota-lunas" placeholder="Nota Lunas" class="form-control" required>
+                                                                                    </div>
+                                                                                    <?php if($row['garansi']!='GARANSI TERPAKAI'){?>
+                                                                                    <div class="form-group">
+                                                                                        <label for="garansi" <?= $color_black?>>Garansi <small class="text-danger">wajib*</small></label>
+                                                                                        <input type="date" name="garansi" id="garansi" placeholder="Garansi" value="1 Minggu" class="form-control" required>
+                                                                                    </div>
+                                                                                    <?php }?>
+                                                                                    <div class="form-group">
+                                                                                        <label for="ket" <?= $color_black?>>Keterangan <small class="text-info">jika ada keterangan isikan.</small></label>
+                                                                                        <textarea name="ket" id="ket" cols="30" rows="5" class="form-control" placeholder="Keterangan"></textarea>
+                                                                                    </div>
+                                                                                    <div class="input-group mb-3">
+                                                                                        <label for="ket-img" <?= $color_black?>>Bukti tanpa nota <small class="text-info">Jika ambil barang tanpa nota maka masukan tanda bukti lain seperti KTP/Tanda Pengenal lainnya.</small></label>
+                                                                                        <div class="custom-file">
+                                                                                            <input type="file" name="ket-img" class="custom-file-input" id="ket-img" aria-describedby="inputGroupFileAddon03">
+                                                                                            <label class="custom-file-label text-center" for="ket-img">Pilih Gambar</label>
                                                                                         </div>
-                                                                                        <?php if($row['garansi']!='TERPAKAI'){?>
-                                                                                        <div class="form-group">
-                                                                                            <label for="garansi" <?= $color_black?>>Garansi <small class="text-danger">wajib*</small></label>
-                                                                                            <input type="date" name="garansi" id="garansi" placeholder="Garansi" value="1 Minggu" class="form-control" required>
-                                                                                        </div>
-                                                                                        <?php }?>
-                                                                                        <div class="form-group">
-                                                                                            <label for="ket" <?= $color_black?>>Keterangan <small class="text-info">jika ada keterangan isikan.</small></label>
-                                                                                            <textarea name="ket" id="ket" cols="30" rows="5" class="form-control" placeholder="Keterangan"></textarea>
-                                                                                        </div>
-                                                                                        <div class="input-group mb-3">
-                                                                                            <label for="ket-img" <?= $color_black?>>Bukti tanpa nota <small class="text-info">Jika ambil barang tanpa nota maka masukan tanda bukti lain seperti KTP/Tanda Pengenal lainnya.</small></label>
-                                                                                            <div class="custom-file">
-                                                                                                <input type="file" name="ket-img" class="custom-file-input" id="ket-img" aria-describedby="inputGroupFileAddon03">
-                                                                                                <label class="custom-file-label text-center" for="ket-img">Pilih Gambar</label>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="form-group">
-                                                                                            <button type="submit" name="submit-report" class="btn btn-sm ml-3" <?= $bg_black?>><i class="fas fa-check-double"></i> Apply</button>
-                                                                                        </div>
-                                                                                    </form>
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        <button type="submit" name="submit-report" class="btn btn-sm ml-3" <?= $bg_black?>><i class="fas fa-check-double"></i> Apply</button>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         <?php }}else if($id_status==6){?>
@@ -176,6 +174,7 @@
                                                                     <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
                                                                     <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
                                                                     <input type="hidden" name="id-layanan" value="<?= $row['id_layanan']?>">
+                                                                    <input type="hidden" name="id-nota" value="<?= $row['id_nota']?>">
                                                                     <div class="form-group">
                                                                         <button type="submit" name="delete-notes" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Hapus</button>
                                                                     </div>
@@ -205,6 +204,9 @@
                                                 <div class="card card-body border-0 m-0 p-0 text-center">
                                                     <form action="" method="POST">
                                                         <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
+                                                        <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
+                                                        <input type="hidden" name="id-layanan" value="<?= $row['id_layanan']?>">
+                                                        <?php if($row['id_nota']!=3){?>
                                                         <div class='form-group'>
                                                             <label for="nota-tinggal" <?= $color_black?>>Nota Tinggal</label>
                                                             <input type="number" name="nota-tinggal" id="nota-tinggal" value="<?= $row['id_nota_tinggal']?>" placeholder="Nomor nota tinggal"  class="form-control text-center" required>
@@ -215,6 +217,13 @@
                                                             <input type="number" name="nota-dp" id="nota-dp" value="<?= $row['id_nota_dp']?>" placeholder="Nomor nota dp" class="form-control text-center">
                                                             <small class="text-info">Jika ada isikan!</small>
                                                         </div>
+                                                        <?php }if($row['id_nota']==3){?>
+                                                        <div class='form-group'>
+                                                            <label for="nota-lunas" <?= $color_black?>>Nota Lunas</label>
+                                                            <input type="number" name="nota-lunas" id="nota-lunas" value="<?= $row['id_nota_lunas']?>" placeholder="Nomor nota lunas" class="form-control text-center" required>
+                                                            <small class="text-danger">Wajib*</small>
+                                                        </div>
+                                                        <?php }?>
                                                         <div class='form-group'>
                                                             <label for="username" <?= $color_black?>>Username</label>
                                                             <input type="text" name="username" id="username" value="<?= $row['first_name']?>" placeholder="Nama pengguna" class="form-control text-center" required>
@@ -242,7 +251,7 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="seri" <?= $color_black?>>Seri</label>
-                                                                <input type="text" name="seri" id="seri" value="<?= $row_hp['seri']?>" placeholder="Seri" class="form-control text-center">
+                                                                <input type="text" name="seri-hp" id="seri" value="<?= $row_hp['seri']?>" placeholder="Seri" class="form-control text-center">
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="imei" <?= $color_black?>>Imei</label>
@@ -256,7 +265,7 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="seri" <?= $color_black?>>Seri</label>
-                                                                <input type="text" name="seri" id="seri" value="<?= $row_laptop['seri']?>" placeholder="Seri" class="form-control text-center">
+                                                                <input type="text" name="seri-laptop" id="seri" value="<?= $row_laptop['seri']?>" placeholder="Seri" class="form-control text-center">
                                                             </div>
                                                         <?php }?>
                                                         <div class='form-group mt-3'>

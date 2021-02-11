@@ -3,7 +3,7 @@
     require_once("../Application/session/redirect-access-users.php");
     require_once("../Application/session/redirect-access-visitor.php");
     require_once("../Application/controller/script.php");
-    $_SESSION['page-name']="- Sub Menu";
+    $_SESSION['page-name']="Sub Menu";
 ?>
 
 <!-- == Sub Menu page == -->
@@ -21,7 +21,7 @@
                     <div class="container-fluid">
                         <!-- == Page Heading == -->
                             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h1 class="h3 mb-0" <?= $color_black ?>>Sub Menu</h1>
+                                <h1 class="h3 mb-0" <?= $color_black ?>><?= $_SESSION['page-name']?></h1>
                             </div>
                         <!-- == Content Info == -->
                             <div class="row flex-row-reverse">
