@@ -333,7 +333,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status
-                    LIMIT $awal_data10, $data10
+                    LIMIT $awal_data10, $data10 ORDER BY notes.id_data DESC
                 ");
             }
             if($_SESSION['id-role']<=3){ // => administrasi
@@ -416,7 +416,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.tgl_cari='$today' AND notes.id_nota=1 OR notes.id_nota=2
+                    WHERE notes.tgl_cari='$today' AND notes.id_nota=1 OR notes.id_nota=2 ORDER BY notes.id_data DESC
                 ");
                 $data7=25;
                 $result7=mysqli_query($conn, "SELECT * FROM notes");
@@ -428,7 +428,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.id_nota=1 OR notes.id_nota=2
+                    WHERE notes.id_nota=1 OR notes.id_nota=2 ORDER BY notes.id_data DESC
                     LIMIT $awal_data7, $data7
                 ");
                 $category_services=mysqli_query($conn, "SELECT * FROM category_services WHERE id_category<=2");
@@ -491,7 +491,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.id_nota=3
+                    WHERE notes.id_nota=3 ORDER BY notes.id_data DESC
                     LIMIT $awal_data8, $data8
                 ");
                 if(isset($_POST['submit-notes-lunas'])){
@@ -510,8 +510,61 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.id_nota=4
+                    WHERE notes.id_nota=4 ORDER BY notes.id_data DESC
                     LIMIT $awal_data9, $data9
+                ");
+                $data12=25;
+                $result12=mysqli_query($conn, "SELECT * FROM notes");
+                $total12=mysqli_num_rows($result12);
+                $total_page12=ceil($total12/$data12);
+                $page12=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data12=($data12*$page12)-$data12;
+                $notes_report=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN notes_type ON notes.id_nota=notes_type.id_nota
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_nota=5 ORDER BY notes.id_data DESC
+                    LIMIT $awal_data12, $data12
+                ");
+                $data13=25;
+                $result13=mysqli_query($conn, "SELECT * FROM laporan_pengeluaran");
+                $total13=mysqli_num_rows($result13);
+                $total_page13=ceil($total13/$data13);
+                $page13=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data13=($data13*$page13)-$data13;
+                $report_days=mysqli_query($conn, "SELECT * FROM laporan_pengeluaran ORDER BY id_pengeluaran DESC LIMIT $awal_data13, $data13");
+                if(isset($_POST['submit-expense'])){
+                    if(report_expense($_POST)>0){
+                        $_SESSION['message-success']="Berhasil memasukan pengeluaran";
+                        header("Location: report-expense");exit;
+                    }
+                }
+                if(isset($_POST['edit-expense'])){
+                    if(edit_report_expense($_POST)>0){
+                        $_SESSION['message-success']="Berhasil mengedit pengeluaran";
+                        header("Location: report-expense");exit;
+                    }
+                }
+                if(isset($_POST['delete-expense'])){
+                    if(delete_report_expense($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menghapus pengeluaran";
+                        header("Location: report-expense");exit;
+                    }
+                }
+                $data14=25;
+                $result14=mysqli_query($conn, "SELECT * FROM notes");
+                $total14=mysqli_num_rows($result14);
+                $total_page14=ceil($total14/$data14);
+                $page14=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data14=($data14*$page14)-$data14;
+                $notes_report_dp=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN notes_type ON notes.id_nota=notes_type.id_nota
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_nota=5 AND notes.id_nota_dp>0 ORDER BY notes.id_data DESC
+                    LIMIT $awal_data14, $data14
                 ");
             }
             if($_SESSION['id-role']<=5){ // => lebih kecil sama dengan teknisi & web dev/des
@@ -525,7 +578,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status
-                    WHERE notes.id_nota=5 AND notes.id_status<6
+                    WHERE notes.id_nota=5 AND notes.id_status<6 ORDER BY notes.id_data DESC
                     LIMIT $awal_data11, $data11
                 ");
                 if(isset($_POST['ubah-status-progress'])){
@@ -553,6 +606,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
                     WHERE notes.tgl_cari='$today' AND notes.id_pegawai='$id_user' AND notes.id_nota=1 OR notes.id_nota=2
+                    ORDER BY notes.id_data DESC
                 ");
                 $data7=25;
                 $result7=mysqli_query($conn, "SELECT * FROM notes");
@@ -564,7 +618,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=1 OR notes.id_nota=2
+                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=1 OR notes.id_nota=2 ORDER BY notes.id_data DESC
                     LIMIT $awal_data7, $data7
                 ");
                 $data8=25;
@@ -577,7 +631,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=3
+                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=3 ORDER BY notes.id_data DESC
                     LIMIT $awal_data8, $data8
                 ");
                 $data9=25;
@@ -590,7 +644,7 @@ require_once("connect.php");require_once("functions.php");
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
                     JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=4
+                    WHERE notes.id_pegawai='$id_user' AND notes.id_nota=4 ORDER BY notes.id_data DESC
                     LIMIT $awal_data9, $data9
                 ");
             }

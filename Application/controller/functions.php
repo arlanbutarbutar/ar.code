@@ -137,7 +137,7 @@
             // => all roles
                 $link_log="http://localhost/arcode/views/";
                 $date=date('l, d M Y'); $date_search=date('Y-m-d');
-                $link_qr="https://aa63f5eb20c6.ngrok.io/ar.code/Views/qr-aksi?auth=";
+                $link_qr="https://4bebd0b96290.ngrok.io/ar.code/Views/qr-aksi?auth=";
             // => role selection
                 if($_SESSION['id-role']<=6){ // => all administrator || ==> Dashboard || ==> web client services
                     function contact_user($msg){global $conn; // == mail-access => 2/contact user
@@ -1045,6 +1045,38 @@
                         move_uploaded_file($tmpName,'../Assets/img/img-notes/'.$verifyPhoto);
                         return $verifyPhoto;
                     }
+                    function report_expense($data){global $conn,$time,$date,$date_search;
+                        $jenis=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['jenis']))));
+                        $ket=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['ket']))));
+                        $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['biaya']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Memasukan data pengeluaran jenis: ".$jenis." dengan biaya ".$biaya;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "INSERT INTO laporan_pengeluaran(jenis_pengeluaran,ket,biaya_pengeluaran,tgl_pengeluaran,tgl_cari,time) VALUES('$jenis','$ket','$biaya','$date','$date_search','$time')");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function edit_report_expense($data){global $conn,$time,$date;
+                        $id_pengeluaran=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-pengeluaran']))));
+                        $jenis=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['jenis']))));
+                        $ket=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['ket']))));
+                        $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['biaya']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Mengedit data pengeluaran dengan id: ".$id_pengeluaran;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE laporan_pengeluaran SET jenis_pengeluaran='$jenis', ket='$ket', biaya_pengeluaran='$biaya' WHERE id_pengeluaran='$id_pengeluaran'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function delete_report_expense($data){global $conn,$time,$date;
+                        $id_pengeluaran=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-pengeluaran']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Menghapus data pengeluaran dengan id: ".$id_pengeluaran;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "DELETE FROM laporan_pengeluaran WHERE id_pengeluaran='$id_pengeluaran'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function report_sparepart($data){global $conn,$time,$date,$date_search;}
+                    function edit_report_sparepart($data){global $conn,$time,$date;}
+                    function delete_report_sparepart($data){global $conn,$time,$date;}
                     // function blank__($data){global $conn,$time,$date;}
                 }
                 if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
@@ -1090,31 +1122,6 @@
             if(isset($_SESSION['id-role'])){
                 if($_SESSION['id-role']<13){
                     
-                    function add_expense_report($add){global $conn, $time;
-                        $jenis=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['jenis']))));
-                        $ket=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['ket']))));
-                        $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $add['biaya']))));
-                        $tgl=date('l, d M Y');
-                        $tgl_cari=date('Y-m-d');
-                        $id_log=$_SESSION['id-log'];
-                        $log="Insert data pengeluaran jenis: ".$jenis;
-                        $date_log=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        mysqli_query($conn, "INSERT INTO laporan_pengeluaran(jenis_pengeluaran,ket,biaya_pengeluaran,tgl_pengeluaran,tgl_cari,time) VALUES('$jenis','$ket','$biaya','$tgl','$tgl_cari','$time')");
-                        return mysqli_affected_rows($conn);
-                    }
-                    function edit_expense_report($edit){global $conn, $time;
-                        $id_pengeluaran=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['id-pengeluaran']))));
-                        $jenis=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['jenis']))));
-                        $ket=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['ket']))));
-                        $biaya=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $edit['biaya']))));
-                        $id_log=$_SESSION['id-log'];
-                        $log="Mengedit data pengeluaran dengan id: ".$id_pengeluaran;
-                        $date_log=date('l, d M Y');
-                        mysqli_query($conn, "INSERT INTO employee_log(id_log,log,date,time) VALUES('$id_log','$log','$date_log','$time')");
-                        mysqli_query($conn, "UPDATE laporan_pengeluaran SET jenis_pengeluaran='$jenis', ket='$ket', biaya_pengeluaran='$biaya' WHERE id_pengeluaran='$id_pengeluaran'");
-                        return mysqli_affected_rows($conn);
-                    }
                     function delete_expense_report($del){global $conn, $time;
                         $id_pengeluaran=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $del['id-pengeluaran']))));
                         $id_log=$_SESSION['id-log'];

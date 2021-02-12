@@ -1,14 +1,13 @@
 <?php if(!isset($_SESSION)){session_start();}
     if(!isset($_GET['auth']) || empty($_GET['auth'])){
-        if($_SESSION['page-name']=="Dashboard"){
-            header("Location: dashboard");exit;
-        }else if($_SESSION['page-name']=="Nota Tinggal"){
-            header("Location: nota-tinggal");exit;
-        }else if($_SESSION['page-name']=="Nota Lunas"){
-            header("Location: nota-lunas");exit;
-        }else if($_SESSION['page-name']=="Nota Batal"){
-            header("Location: nota-cancel");exit;
-        }
+        if($_SESSION['page-name']=="Dashboard"){header("Location: dashboard");exit;}
+        else if($_SESSION['page-name']=="Nota Tinggal"){header("Location: nota-tinggal");exit;}
+        else if($_SESSION['page-name']=="Nota Lunas"){header("Location: nota-lunas");exit;}
+        else if($_SESSION['page-name']=="Nota Batal"){header("Location: nota-cancel");exit;}
+        else if($_SESSION['page-name']=="Nota Semua"){header("Location: nota-all");exit;}
+        else if($_SESSION['page-name']=="Nota Garansi"){header("Location: nota-garansi");exit;}
+        else if($_SESSION['page-name']=="Laporan Harian"){header("Location: report-day");exit;}
+        else if($_SESSION['page-name']=="Laporan DP/Uang Muka"){header("Location: report-dp");exit;}
     }
     require_once("../Application/session/redirect-user.php");
     require_once("../Application/session/redirect-access-visitor.php");

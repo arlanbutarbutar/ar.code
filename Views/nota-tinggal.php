@@ -258,7 +258,13 @@
                                                         <th scope="col">Layanan</th>
                                                         <th scope="col">Teknisi</th>
                                                         <th scope="col">Status</th>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <th scope="col">Waktu Status</th>
+                                                        <?php }?>
                                                         <th scope="col">Tgl Masuk</th>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <th scope="col">Waktu Masuk</th>
+                                                        <?php }?>
                                                         <th scope="col">Tgl Ambil</th>
                                                         <th scope="col">Kerusakan</th>
                                                         <th scope="col">Kondisi</th>
@@ -316,14 +322,19 @@
                                                         <td><?php $id_tek=$row_all['id_pegawai'];
                                                             $teknisi=mysqli_query($conn, "SELECT * FROM users WHERE id_user='$id_tek'");foreach($teknisi as $row_tek){echo $row_tek['first_name'];}?></td>
                                                         <td><?= $row_all['status']?></td>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <td><?= $row_all['time_status']?></td>
+                                                        <?php }?>
                                                         <td><?= $row_all['tgl_masuk']?></td>
+                                                        <?php if($_SESSION['id-role']<=2){?>
+                                                        <td><?= $row_all['time']?></td>
+                                                        <?php }?>
                                                         <td><?= $row_all['tgl_ambil']?></td>
                                                         <td><?= $row_all['kerusakan']?></td>
                                                         <td><?= $row_all['kondisi']?></td>
                                                         <td><?= $row_all['kelengkapan']?></td>
                                                         <td>Rp. <?= number_format($row_all['dp'])?></td>
                                                         <td>Rp. <?= number_format($row_all['biaya'])?></td>
-                                                    </tr>
                                                     <?php $no++; }}?>
                                                 </tbody>
                                             </table>
