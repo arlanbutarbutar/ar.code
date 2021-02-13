@@ -54,11 +54,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $no=1; if(mysqli_num_rows($notes_report_dp)==0){?>
+                                                    <?php $no=1; if(mysqli_num_rows($report_dp)==0){?>
                                                     <tr>
                                                         <th colspan="15">Belum ada data yang dibatalkan!</th>
                                                     </tr>
-                                                    <?php }else if(mysqli_num_rows($notes_report_dp)>0){while($row_all=mysqli_fetch_assoc($notes_report_dp)){?>
+                                                    <?php }else if(mysqli_num_rows($report_dp)>0){while($row_all=mysqli_fetch_assoc($report_dp)){?>
                                                     <tr>
                                                         <th scope="row"><?= $no;?></th>
                                                         <td>DP<?= $row_all['id_nota_dp']?></td>
@@ -120,23 +120,23 @@
                                             </table>
                                             <nav class="small" aria-label="Page navigation example">
                                                 <ul class="pagination justify-content-center">
-                                                    <?php if(isset($page14)){if(isset($total_page14)){if($page14>1):?>
+                                                    <?php if(isset($page13)){if(isset($total_page13)){if($page13>1):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="report-dp?page=<?= $page14-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="report-dp?page=<?= $page13-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
                                                     </li>
                                                     <?php endif;?>
-                                                    <?php for($i=1; $i<=$total_page14; $i++):?>
+                                                    <?php for($i=1; $i<=$total_page13; $i++):?>
                                                         <?php if($i<=5):?>
-                                                            <?php if($i==$page14):?>
+                                                            <?php if($i==$page13):?>
                                                                 <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="report-dp?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php else :?>
                                                                 <li class="page-item shadow"><a class="page-link border-0" href="report-dp?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php endif;?>
                                                         <?php endif;?>
                                                     <?php endfor;?>
-                                                    <?php if($page14<$total_page14):?>
+                                                    <?php if($page13<$total_page13):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="report-dp?page=<?= $page14+1;?>">Next</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="report-dp?page=<?= $page13+1;?>">Next</a>
                                                     </li>
                                                     <?php endif;}}?>
                                                 </ul>

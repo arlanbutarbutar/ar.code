@@ -64,11 +64,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $no=1; if(mysqli_num_rows($notes_report)==0){?>
+                                                    <?php $no=1; if(mysqli_num_rows($report_days)==0){?>
                                                     <tr>
                                                         <th colspan="15">Belum ada data yang dibatalkan!</th>
                                                     </tr>
-                                                    <?php }else if(mysqli_num_rows($notes_report)>0){while($row_all=mysqli_fetch_assoc($notes_report)){?>
+                                                    <?php }else if(mysqli_num_rows($report_days)>0){while($row_all=mysqli_fetch_assoc($report_days)){?>
                                                     <tr>
                                                         <th scope="row"><?= $no;?></th>
                                                         <td>T<?= $row_all['id_nota_tinggal']?></td>

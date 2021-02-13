@@ -519,7 +519,7 @@ require_once("connect.php");require_once("functions.php");
                 $total_page12=ceil($total12/$data12);
                 $page12=(isset($_GET['page']))?$_GET['page']:1;
                 $awal_data12=($data12*$page12)-$data12;
-                $notes_report=mysqli_query($conn, "SELECT * FROM notes 
+                $report_days=mysqli_query($conn, "SELECT * FROM notes 
                     JOIN notes_type ON notes.id_nota=notes_type.id_nota
                     JOIN users ON notes.id_user=users.id_user 
                     JOIN category_services ON notes.id_layanan=category_services.id_category
@@ -528,12 +528,26 @@ require_once("connect.php");require_once("functions.php");
                     LIMIT $awal_data12, $data12
                 ");
                 $data13=25;
-                $result13=mysqli_query($conn, "SELECT * FROM laporan_pengeluaran");
+                $result13=mysqli_query($conn, "SELECT * FROM notes");
                 $total13=mysqli_num_rows($result13);
                 $total_page13=ceil($total13/$data13);
                 $page13=(isset($_GET['page']))?$_GET['page']:1;
                 $awal_data13=($data13*$page13)-$data13;
-                $report_days=mysqli_query($conn, "SELECT * FROM laporan_pengeluaran ORDER BY id_pengeluaran DESC LIMIT $awal_data13, $data13");
+                $report_dp=mysqli_query($conn, "SELECT * FROM notes 
+                    JOIN notes_type ON notes.id_nota=notes_type.id_nota
+                    JOIN users ON notes.id_user=users.id_user 
+                    JOIN category_services ON notes.id_layanan=category_services.id_category
+                    JOIN notes_status ON notes.id_status=notes_status.id_status 
+                    WHERE notes.id_nota=5 AND notes.id_nota_dp>0 ORDER BY notes.id_data DESC
+                    LIMIT $awal_data13, $data13
+                ");
+                $data14=25;
+                $result14=mysqli_query($conn, "SELECT * FROM laporan_pengeluaran");
+                $total14=mysqli_num_rows($result14);
+                $total_page14=ceil($total14/$data14);
+                $page14=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data14=($data14*$page14)-$data14;
+                $report_expense=mysqli_query($conn, "SELECT * FROM laporan_pengeluaran ORDER BY id_pengeluaran DESC LIMIT $awal_data14, $data14");
                 if(isset($_POST['submit-expense'])){
                     if(report_expense($_POST)>0){
                         $_SESSION['message-success']="Berhasil memasukan pengeluaran";
@@ -552,20 +566,43 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: report-expense");exit;
                     }
                 }
-                $data14=25;
-                $result14=mysqli_query($conn, "SELECT * FROM notes");
-                $total14=mysqli_num_rows($result14);
-                $total_page14=ceil($total14/$data14);
-                $page14=(isset($_GET['page']))?$_GET['page']:1;
-                $awal_data14=($data14*$page14)-$data14;
-                $notes_report_dp=mysqli_query($conn, "SELECT * FROM notes 
-                    JOIN notes_type ON notes.id_nota=notes_type.id_nota
-                    JOIN users ON notes.id_user=users.id_user 
-                    JOIN category_services ON notes.id_layanan=category_services.id_category
-                    JOIN notes_status ON notes.id_status=notes_status.id_status 
-                    WHERE notes.id_nota=5 AND notes.id_nota_dp>0 ORDER BY notes.id_data DESC
-                    LIMIT $awal_data14, $data14
-                ");
+                $data15=25;
+                $result15=mysqli_query($conn, "SELECT * FROM laporan");
+                $total15=mysqli_num_rows($result15);
+                $total_page15=ceil($total15/$data15);
+                $page15=(isset($_GET['page']))?$_GET['page']:1;
+                $awal_data15=($data15*$page15)-$data15;
+                $report_spareparts=mysqli_query($conn, "SELECT * FROM laporan_spareparts ORDER BY laporan_spareparts.id_sparepart DESC LIMIT $awal_data15, $data15");
+                if(isset($_POST['submit-sparepart-qr'])){
+                    if(report_sparepart_qr($_POST)>0){
+                        $_SESSION['message-success']="Berhasil memasukan sparepart";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
+                if(isset($_POST['edit-sparepart-qr'])){
+                    if(edit_report_sparepart_qr($_POST)>0){
+                        $_SESSION['message-success']="Berhasil memasukan sparepart";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
+                if(isset($_POST['submit-sparepart'])){
+                    if(report_sparepart($_POST)>0){
+                        $_SESSION['message-success']="Berhasil memasukan sparepart";
+                        header("Location: report-spareparts");exit;
+                    }
+                }
+                if(isset($_POST['edit-sparepart'])){
+                    if(edit_report_sparepart($_POST)>0){
+                        $_SESSION['message-success']="Berhasil mengedit sparepart";
+                        header("Location: report-spareparts");exit;
+                    }
+                }
+                if(isset($_POST['delete-sparepart'])){
+                    if(delete_report_sparepart($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menghapus sparepart";
+                        header("Location: report-spareparts");exit;
+                    }
+                }
             }
             if($_SESSION['id-role']<=5){ // => lebih kecil sama dengan teknisi & web dev/des
                 $data11=25;

@@ -75,11 +75,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $no=1;if(mysqli_num_rows($report_days)==0){?>
+                                                    <?php $no=1;if(mysqli_num_rows($report_expense)==0){?>
                                                     <tr>
                                                         <th colspan="8">Belum ada data yang dimasukan hari ini!</th>
                                                     </tr>
-                                                    <?php }else if(mysqli_num_rows($report_days)>0){while($row=mysqli_fetch_assoc($report_days)){?>
+                                                    <?php }else if(mysqli_num_rows($report_expense)>0){while($row=mysqli_fetch_assoc($report_expense)){?>
                                                     <tr>
                                                         <th scope="row"><?= $no;?></th>
                                                         <td><?= $row['jenis_pengeluaran']?></td>

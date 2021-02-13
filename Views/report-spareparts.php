@@ -32,7 +32,7 @@
                                     <div class="col-md-4">
                                         <div class="card card-body border-0 shadow mt-3 text-center">
                                             <h4 class="font-weight-bold" <?= $color_black?>>Masukan Data</h4>
-                                            <p class="small" <?= $color_black?>>Masukan data untuk laporan pengeluaran disini.</p>
+                                            <p class="small" <?= $color_black?>>Masukan data untuk laporan sparepart yang di stok disini.</p>
                                             <button class="btn btn-link btn-sm" <?= $color_black?> type="button" data-toggle="collapse" data-target="#insert-nota" aria-expanded="false" aria-controls="insert-nota">Gulir kebawah <i class="fas fa-hand-point-down"></i></button>
                                             <div class="collapse" id="insert-nota">
                                                 <div class="card card-body border-0 m-0 p-0">
@@ -82,11 +82,11 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $no=1;if(mysqli_num_rows($report_days)==0){?>
+                                                    <?php $no=1;if(mysqli_num_rows($report_spareparts)==0){?>
                                                     <tr>
                                                         <th colspan="8">Belum ada data yang dimasukan hari ini!</th>
                                                     </tr>
-                                                    <?php }else if(mysqli_num_rows($report_days)>0){while($row=mysqli_fetch_assoc($report_days)){?>
+                                                    <?php }else if(mysqli_num_rows($report_spareparts)>0){while($row=mysqli_fetch_assoc($report_spareparts)){?>
                                                     <tr>
                                                         <th scope="row"><?= $no;?></th>
                                                         <td><?= $row['tgl_masuk']?></td>
@@ -130,23 +130,23 @@
                                             </table>
                                             <nav class="small" aria-label="Page navigation example">
                                                 <ul class="pagination justify-content-center">
-                                                    <?php if(isset($page13)){if(isset($total_page13)){if($page13>1):?>
+                                                    <?php if(isset($page15)){if(isset($total_page15)){if($page15>1):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="report-expense?page=<?= $page13-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="report-spareparts?page=<?= $page15-1;?>" tabindex="-1" aria-disabled="true">Previous</a>
                                                     </li>
                                                     <?php endif;?>
-                                                    <?php for($i=1; $i<=$total_page13; $i++):?>
+                                                    <?php for($i=1; $i<=$total_page15; $i++):?>
                                                         <?php if($i<=5):?>
-                                                            <?php if($i==$page13):?>
-                                                                <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="report-expense?page=<?= $i;?>"><?= $i;?></a></li>
+                                                            <?php if($i==$page15):?>
+                                                                <li class="page-item shadow"><a class="page-link font-weight-bold border-0" <?= $bg_black?> href="report-spareparts?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php else :?>
-                                                                <li class="page-item shadow"><a class="page-link border-0" href="report-expense?page=<?= $i;?>"><?= $i;?></a></li>
+                                                                <li class="page-item shadow"><a class="page-link border-0" href="report-spareparts?page=<?= $i;?>"><?= $i;?></a></li>
                                                             <?php endif;?>
                                                         <?php endif;?>
                                                     <?php endfor;?>
-                                                    <?php if($page13<$total_page13):?>
+                                                    <?php if($page15<$total_page15):?>
                                                     <li class="page-item shadow">
-                                                        <a class="page-link border-0" <?= $bg_black?> href="report-expense?page=<?= $page13+1;?>">Next</a>
+                                                        <a class="page-link border-0" <?= $bg_black?> href="report-spareparts?page=<?= $page15+1;?>">Next</a>
                                                     </li>
                                                     <?php endif;}}?>
                                                 </ul>
