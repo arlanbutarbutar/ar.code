@@ -196,105 +196,103 @@
                                     <?php if($_SESSION['id-role']<=3){?>
                                         <div class="col-lg-4">
                                             <div class="row">
-                                                <!-- == garansi sparepart == -->
-                                                    <?php if($row['id_nota']==5 && $row['id_status']<=5){?>
-                                                    <div class="col-lg-12">
-                                                        <div class="card card-body shadow border-0 mt-3 text-center">
-                                                            <h4 class="font-weight-bold" <?= $color_black?>>Garansi Sparepart</h4>
-                                                            <p class="small" <?= $color_black?>>Tambahkan sparepart untuk barang yang digaransikan disini.</p>
-                                                            <?php if($row['id_status']<6){?>
-                                                                <button class="btn btn-link btn-sm" <?= $color_black?> type="button" data-toggle="collapse" data-target="#insert-sparepart" aria-expanded="false" aria-controls="insert-sparepart">Gulir kebawah <i class="fas fa-hand-point-down"></i></button>
-                                                                <div class="collapse" id="insert-sparepart">
-                                                                    <div class="card card-body border-0 m-0 p-0 text-center">
-                                                                        <form action="" method="POST">
-                                                                            <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
-                                                                            <input type="hidden" name="id-teknisi" value="<?= $row['id_pegawai']?>">
-                                                                            <input type="hidden" name="id-status" value="4">
-                                                                            <?php if(!empty($row['id_nota_tinggal'])){?>
-                                                                                <input type="hidden" name="id-nota" value="<?= $row['id_nota_tinggal']?>">
-                                                                            <?php }else{?>
-                                                                                <input type="hidden" name="id-nota" value="<?= $row['id_nota_lunas']?>">
-                                                                            <?php }?>
-                                                                            <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
-                                                                            <div class="form-group">
-                                                                                <input type="text" name="ket" placeholder="Sparepart" class="form-control text-center" required>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <input type="text" name="suplayer" placeholder="Suplayer" class="form-control text-center" required>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <input type="number" name="harga" placeholder="Harga (per biji)" class="form-control text-center" required>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <textarea name="ket-plus" cols="30" rows="5" class="form-control" placeholder="Keterangan tambahan"></textarea>
-                                                                            </div>
-                                                                            <div class='form-group'>
-                                                                                <button type="submit" name="submit-sparepart-qr" class="btn btn-sm" <?= $bg_black?>>Apply</button>
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            <?php }if($row['id_status']==6){?>
-                                                                <p <?= $color_black?>>Data ini telah dimasukan ke dalam laporan sehingga tidak dapat dirubah lagi.</p>
-                                                            <?php }?>
-                                                        </div>
-                                                    </div>
-                                                    <?php }?>
                                                 <!-- == tambah sparepart == -->
                                                     <div class="col-lg-12">
                                                         <div class="card card-body shadow border-0 mt-3 text-center">
-                                                            <?php $id_user=$row['id_user']; $view_sparepart=mysqli_query($conn, "SELECT * FROM laporan_spareparts JOIN users ON laporan_spareparts.id_user=users.id_user WHERE laporan_spareparts.id_user='$id_user'"); if(mysqli_num_rows($view_sparepart)==0){?>
+                                                            <?php $id_user=$row['id_user']; $view_sparepart=mysqli_query($conn, "SELECT * FROM laporan_spareparts WHERE id_user='$id_user'"); if(mysqli_num_rows($view_sparepart)==0){?>
                                                                 <h4 class="font-weight-bold" <?= $color_black?>>Sparepart</h4>
                                                                 <p class="small" <?= $color_black?>>Tambahkan sparepart untuk barang yang diperbaiki disini.</p>
                                                                 <?php if($row['id_status']<6){?>
-                                                                <button class="btn btn-link btn-sm" <?= $color_black?> type="button" data-toggle="collapse" data-target="#insert-sparepart" aria-expanded="false" aria-controls="insert-sparepart">Gulir kebawah <i class="fas fa-hand-point-down"></i></button>
-                                                                <div class="collapse" id="insert-sparepart">
-                                                                    <div class="card card-body border-0 m-0 p-0 text-center">
-                                                                        <form action="" method="POST">
-                                                                            <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
-                                                                            <input type="hidden" name="id-teknisi" value="<?= $row['id_pegawai']?>">
-                                                                            <?php if(!empty($row['id_nota_tinggal'])){?>
-                                                                                <input type="hidden" name="id-nota" value="<?= $row['id_nota_tinggal']?>">
-                                                                            <?php }else{?>
-                                                                                <input type="hidden" name="id-nota" value="<?= $row['id_nota_lunas']?>">
-                                                                            <?php }?>
-                                                                            <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
-                                                                            <div class="form-group">
-                                                                                <input type="text" name="ket" placeholder="Sparepart" class="form-control text-center" required>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <input type="text" name="suplayer" placeholder="Suplayer" class="form-control text-center" required>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <input type="number" name="harga" placeholder="Harga (per biji)" class="form-control text-center" required>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <textarea name="ket-plus" cols="30" rows="5" class="form-control" placeholder="Keterangan tambahan"></textarea>
-                                                                            </div>
-                                                                            <div class='form-group'>
-                                                                                <button type="submit" name="submit-sparepart-qr" class="btn btn-sm" <?= $bg_black?>>Apply</button>
-                                                                            </div>
-                                                                        </form>
+                                                                    <button class="btn btn-link btn-sm" <?= $color_black?> type="button" data-toggle="collapse" data-target="#insert-sparepart" aria-expanded="false" aria-controls="insert-sparepart">Gulir kebawah <i class="fas fa-hand-point-down"></i></button>
+                                                                    <div class="collapse" id="insert-sparepart">
+                                                                        <div class="card card-body border-0 m-0 p-0 text-center">
+                                                                            <form action="" method="POST">
+                                                                                <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
+                                                                                <input type="hidden" name="id-teknisi" value="<?= $row['id_pegawai']?>">
+                                                                                <?php if(!empty($row['id_nota_tinggal'])){?>
+                                                                                    <input type="hidden" name="id-nota" value="<?= $row['id_nota_tinggal']?>">
+                                                                                <?php }else{?>
+                                                                                    <input type="hidden" name="id-nota" value="<?= $row['id_nota_lunas']?>">
+                                                                                <?php }?>
+                                                                                <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
+                                                                                <div class="form-group">
+                                                                                    <input type="text" name="ket" placeholder="Sparepart" class="form-control text-center" required>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <input type="text" name="suplayer" placeholder="Suplayer" class="form-control text-center" required>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <input type="number" name="harga" placeholder="Harga (per biji)" class="form-control text-center" required>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <textarea name="ket-plus" cols="30" rows="5" class="form-control" placeholder="Keterangan tambahan"></textarea>
+                                                                                </div>
+                                                                                <div class='form-group'>
+                                                                                    <button type="submit" name="submit-sparepart-qr" class="btn btn-sm" <?= $bg_black?>>Apply</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
                                                                 <?php }if($row['id_status']==6){?>
-                                                                <p <?= $color_black?>>Data ini telah dimasukan ke dalam laporan sehingga tidak dapat dirubah lagi.</p>
+                                                                    <p <?= $color_black?>>Data ini telah dimasukan ke dalam laporan sehingga tidak dapat dirubah lagi.</p>
                                                             <?php }}else if(mysqli_num_rows($view_sparepart)>0){?>
                                                                 <h4 class="font-weight-bold" <?= $color_black?>>Sparepart</h4>
                                                                 <p class="small" <?= $color_black?>>Data sparepart telah dimasukan, berikut data dan barcode dari sparepart.</p>
+                                                                <?php if(mysqli_num_rows($view_sparepart)==1){if($row['garansi']=="GARANSI TERPAKAI"){?>
+                                                                    <button class="btn btn-link btn-sm" <?= $color_black?> type="button" data-toggle="collapse" data-target="#insert-sparepart" aria-expanded="false" aria-controls="insert-sparepart">Gulir kebawah untuk garansi <i class="fas fa-hand-point-down"></i></button>
+                                                                    <div class="collapse" id="insert-sparepart">
+                                                                        <div class="card card-body border-0 m-0 p-0 text-center">
+                                                                            <form action="" method="POST">
+                                                                                <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
+                                                                                <input type="hidden" name="id-teknisi" value="<?= $row['id_pegawai']?>">
+                                                                                <?php if(!empty($row['id_nota_tinggal'])){?>
+                                                                                    <input type="hidden" name="id-nota" value="<?= $row['id_nota_tinggal']?>">
+                                                                                <?php }else{?>
+                                                                                    <input type="hidden" name="id-nota" value="<?= $row['id_nota_lunas']?>">
+                                                                                <?php }?>
+                                                                                <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
+                                                                                <div class="form-group">
+                                                                                    <input type="text" name="ket" placeholder="Sparepart" class="form-control text-center" required>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <input type="text" name="suplayer" placeholder="Suplayer" class="form-control text-center" required>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <input type="number" name="harga" placeholder="Harga (per biji)" class="form-control text-center" required>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <textarea name="ket-plus" cols="30" rows="5" class="form-control" placeholder="Keterangan tambahan"></textarea>
+                                                                                </div>
+                                                                                <div class='form-group'>
+                                                                                    <button type="submit" name="submit-sparepart-qr" class="btn btn-sm" <?= $bg_black?>>Apply</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                <?php }}?>
                                                                 <button class="btn btn-link btn-sm mb-2" <?= $color_black?> type="button" data-toggle="collapse" data-target="#sparepart" aria-expanded="false" aria-controls="sparepart">Gulir kebawah <i class="fas fa-hand-point-down"></i></button>
                                                                 <?php while($row_sp=mysqli_fetch_assoc($view_sparepart)){?>
                                                                 <div class="collapse" id="sparepart">
                                                                     <div class="card card-body border-0 m-0 p-0 text-center">
                                                                         <div class="m-auto"><?= $row_sp['barcode']?></div>
                                                                         <p <?= $color_black?>><?= $row_sp['data_encrypt']?></p>
-                                                                        <p <?= $color_black?>>Sparepart yang digunakan <?= $row_sp['ket']?> di dapat dari <?= $row_sp['suplayer']?> dengan harga Rp. <?= number_format($row_sp['harga'])?>.</p>
-                                                                        <?php if($row['id_nota']<=3){?>
+                                                                        <p <?= $color_black?>>Sparepart yang digunakan <?= $row_sp['ket']?> di dapat dari <?= $row_sp['suplayer']?> dengan harga Rp. <?= number_format($row_sp['harga'])?></p>
+                                                                        <?php if($row['id_nota']<=3 || $row_sp['status_sparepart']<=3){?>
                                                                             <div class="dropdown no-arrow small" <?= $color_black?>>Ingin mengubah data klik
-                                                                                <button class="btn btn-link btn-sm dropdown-toggle" <?= $color_black?> type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">disini</button>
+                                                                                <button class="btn btn-link btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">disini</button>
+                                                                                <p <?= $color_black?>>Jika ingin hapus </p>
+                                                                                <form action="" method="POST">
+                                                                                    <input type="hidden" name="id-sparepart" value="<?= $row_sp['id_sparepart']?>">
+                                                                                    <input type="hidden" name="ket" value="<?= $row_sp['ket']?>">
+                                                                                    <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
+                                                                                    <div class="form-group">
+                                                                                        <button type="submit" name="delete-sparepart-qr" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                                                                    </div>
+                                                                                </form>
                                                                                 <div class="dropdown-menu p-2 border-0 shadow text-center" <?= $color_black?> aria-labelledby="dropdownMenuButton">
                                                                                     <form action="" method="POST">
-                                                                                        <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
+                                                                                        <input type="hidden" name="id-sparepart" value="<?= $row_sp['id_sparepart']?>">
+                                                                                        <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
                                                                                         <div class="form-group">
                                                                                             <label for="ket" <?= $color_black?>>Keterangan</label>
                                                                                             <input type="text" name="ket" value="<?= $row_sp['ket']?>" placeholder="Sparepart" class="form-control text-center" required>

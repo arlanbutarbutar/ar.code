@@ -29,39 +29,51 @@
                                         <?php if(isset($message_success)){echo$message_success;}if(isset($message_danger)){echo$message_danger;}if(isset($message_warning)){echo$message_warning;}if(isset($message_info)){echo$message_info;}if(isset($message_dark)){echo$message_dark;}?>
                                     </div>
                                 <!-- == insert data == -->
-                                    <div class="col-md-4">
-                                        <div class="card card-body border-0 shadow mt-3 text-center">
-                                            <h4 class="font-weight-bold" <?= $color_black?>>Masukan Data</h4>
-                                            <p class="small" <?= $color_black?>>Masukan data untuk laporan sparepart yang di stok disini.</p>
-                                            <button class="btn btn-link btn-sm" <?= $color_black?> type="button" data-toggle="collapse" data-target="#insert-nota" aria-expanded="false" aria-controls="insert-nota">Gulir kebawah <i class="fas fa-hand-point-down"></i></button>
-                                            <div class="collapse" id="insert-nota">
-                                                <div class="card card-body border-0 m-0 p-0">
-                                                    <form action="" method="POST">
-                                                        <div class="form-group">
-                                                            <input type="text" name="ket" placeholder="Sparepart" class="form-control">
+                                    <div class="col-lg-4">
+                                        <div class="row">
+                                            <!-- ambil sparepart -->
+                                                <div class="col-md-12"></div>
+                                            <!-- masukan sparepart -->
+                                                <div class="col-md-12">
+                                                    <div class="card card-body border-0 shadow mt-3 text-center">
+                                                        <h4 class="font-weight-bold" <?= $color_black?>>Masukan Data</h4>
+                                                        <p class="small" <?= $color_black?>>Masukan data untuk laporan sparepart yang di stok disini.</p>
+                                                        <button class="btn btn-link btn-sm" <?= $color_black?> type="button" data-toggle="collapse" data-target="#insert-nota" aria-expanded="false" aria-controls="insert-nota">Gulir kebawah <i class="fas fa-hand-point-down"></i></button>
+                                                        <div class="collapse" id="insert-nota">
+                                                            <div class="card card-body border-0 m-0 p-0">
+                                                                <form action="" method="POST">
+                                                                    <div class="form-group">
+                                                                        <input type="text" name="ket" placeholder="Sparepart" class="form-control" <?= $color_black?>>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <select name="suplayer" class="form-control" <?= $color_black?> required>
+                                                                            <option>Pilih Penyuplai</option>
+                                                                            <?php foreach($supplier as $row_sp):?>
+                                                                            <option value="<?= $row_sp['id_supplier']?>"><?= $row_sp['supplier']?></option>
+                                                                            <?php endforeach;?>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input type="number" name="jumlah" placeholder="Jumlah barang" class="form-control" <?= $color_black?>>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input type="number" name="harga" placeholder="Harga (per biji)" class="form-control" <?= $color_black?>>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <textarea name="ket-plus" cols="30" rows="5" class="form-control" placeholder="Keterangan tambahan" style="resize: none" <?= $color_black?>></textarea>
+                                                                    </div>
+                                                                    <div class='form-group'>
+                                                                        <button type="submit" name="submit-sparepart" class="btn btn-sm" <?= $bg_black?>>Apply</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <input type="text" name="suplayer" placeholder="Suplayer" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input type="number" name="jumlah-barang" placeholder="Jumlah barang" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <input type="number" name="harga" placeholder="Harga (per biji)" class="form-control">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <textarea name="ket-plus" cols="30" rows="5" class="form-control" placeholder="Keterangan tambahan" style="resize: none"></textarea>
-                                                        </div>
-                                                        <div class='form-group'>
-                                                            <button type="submit" name="submit-sparepart" class="btn btn-sm" <?= $bg_black?>>Apply</button>
-                                                        </div>
-                                                    </form>
+                                                    </div>
                                                 </div>
-                                            </div>
                                         </div>
                                     </div>
                                 <!-- == query data == -->
-                                    <div class="col-md-8">
+                                    <div class="col-lg-8">
                                         <div class="card card-body border-0 shadow mt-3">
                                             <table class="table table-sm text-dark text-center">
                                                 <thead>
@@ -78,13 +90,12 @@
                                                         <th scope="col">Harga</th>
                                                         <th scope="col">Total</th>
                                                         <th scope="col">Ket. tambahan</th>
-                                                        <th colspan="3">Aksi</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php $no=1;if(mysqli_num_rows($report_spareparts)==0){?>
                                                     <tr>
-                                                        <th colspan="8">Belum ada data yang dimasukan hari ini!</th>
+                                                        <th colspan="10">Belum ada data yang dimasukan hari ini!</th>
                                                     </tr>
                                                     <?php }else if(mysqli_num_rows($report_spareparts)>0){while($row=mysqli_fetch_assoc($report_spareparts)){?>
                                                     <tr>
@@ -93,37 +104,36 @@
                                                         <?php if($_SESSION['id-role']==5){?>
                                                         <td><?= $row['time']?></td>
                                                         <?php }?>
-                                                        <td><a href="qr?ac=<?= $row['id_sparepart']?>" class="btn btn-light btn-sm shadow-lg"><i class="fas fa-qrcode"></i></a></td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-light bt-sm shadow" data-toggle="modal" data-target="#barcode<?= $row['id_sparepart']?>"><i class="fas fa-barcode"></i></button>
+                                                            <div class="modal fade" id="barcode<?= $row['id_sparepart']?>" tabindex="-1" role="dialog" aria-labelledby="barcode<?= $row['id_sparepart']?>Label" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="barcode<?= $row['id_sparepart']?>Label" <?= $color_black?>>Barcode</h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p <?= $color_black?>>Silakan print barcode ini untuk ambil/pakai sparepart dari stok saat ini.</p>
+                                                                            <div class="card .card-body border-0 m-0 p-0">
+                                                                                <div class="m-auto"><?= $row['barcode']." ".$row['data_encrypt']?></div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-sm" <?= $bg_black?> data-dismiss="modal">Close</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                         <td><?= $row['ket']?></td>
-                                                        <td><?= $row['suplayer']?></td>
+                                                        <td><?= $row['supplier']?></td>
                                                         <td><?= $row['jmlh_barang']?></td>
                                                         <td>Rp. <?= number_format($row['harga'])?></td>
                                                         <td>Rp. <?= number_format($row['jmlh_barang']*$row['harga'])?></td>
                                                         <td><?= $row['ket_plus']?></td>
-                                                        <td>
-                                                            <?php if($_SESSION['id-role']==6){$date=date('Y-m-d');$tgl_report=$row['tgl_cari'];if($date==$tgl_report){?>
-                                                            <button class="btn btn-warning btn-sm" type="button" data-toggle="collapse" data-target="#edit-sparepart<?= $row['id_sparepart']?>" aria-expanded="false" aria-controls="edit-sparepart<?= $row['id_sparepart']?>"><i class="fas fa-pen"></i></button>
-                                                            <?php }else{?>
-                                                            <button class="btn btn-secondary btn-sm" type="button"><i class="fas fa-pen"></i></button>
-                                                            <?php }}if($_SESSION['id-role']==4 || $_SESSION['id-role']==5){?>
-                                                            <button class="btn btn-warning btn-sm" type="button" data-toggle="collapse" data-target="#edit-sparepart<?= $row['id_sparepart']?>" aria-expanded="false" aria-controls="edit-sparepart<?= $row['id_sparepart']?>"><i class="fas fa-pen"></i></button>
-                                                            <?php }?>
-                                                        </td>
-                                                        <td><form action="" method="POST">
-                                                            <input type="hidden" name="id-sparepart" value="<?= $row['id_sparepart']?>">
-                                                            <input type="hidden" name="status" value="<?= $row['status_sparepart']?>">
-                                                            <?php if($_SESSION['id-role']==6){$date=date('Y-m-d');$tgl_report=$row['tgl_cari'];if($date==$tgl_report){?>
-                                                            <button type="submit" name="delete-sparepart" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                                            <?php }else{?>
-                                                            <button type="button" class="btn btn-secondary btn-sm"><i class="fas fa-trash"></i></button>
-                                                            <?php }}if($_SESSION['id-role']==4 || $_SESSION['id-role']==5){?>
-                                                            <button type="submit" name="delete-sparepart" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                                            <?php }?>
-                                                        </form></td>
-                                                        <td><form action="" method="POST">
-                                                            <input type="hidden" name="id-sparepart" value="<?= $row['id_sparepart']?>">
-                                                            <button type="submit" name="ambil-sparepart" class="btn btn-success btn-sm"><i class="fas fa-box-open"></i></button>
-                                                        </form></td>
                                                     </tr>
                                                     <?php $no++;}}?>
                                                 </tbody>

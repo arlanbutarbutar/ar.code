@@ -572,7 +572,8 @@ require_once("connect.php");require_once("functions.php");
                 $total_page15=ceil($total15/$data15);
                 $page15=(isset($_GET['page']))?$_GET['page']:1;
                 $awal_data15=($data15*$page15)-$data15;
-                $report_spareparts=mysqli_query($conn, "SELECT * FROM laporan_spareparts ORDER BY laporan_spareparts.id_sparepart DESC LIMIT $awal_data15, $data15");
+                $report_spareparts=mysqli_query($conn, "SELECT * FROM laporan_spareparts JOIN supplier ON laporan_spareparts.suplayer=supplier.id_supplier WHERE status_sparepart=1 ORDER BY laporan_spareparts.id_sparepart DESC LIMIT $awal_data15, $data15");
+                $supplier=mysqli_query($conn, "SELECT * FROM supplier");
                 if(isset($_POST['submit-sparepart-qr'])){
                     if(report_sparepart_qr($_POST)>0){
                         $_SESSION['message-success']="Berhasil memasukan sparepart";
@@ -585,24 +586,30 @@ require_once("connect.php");require_once("functions.php");
                         header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
                     }
                 }
+                if(isset($_POST['delete-sparepart-qr'])){
+                    if(delete_report_sparepart_qr($_POST)>0){
+                        $_SESSION['message-success']="Berhasil menghapus sparepart";
+                        header("Location: qr-aksi?auth=".$_POST['data-encrypt']);exit;
+                    }
+                }
                 if(isset($_POST['submit-sparepart'])){
                     if(report_sparepart($_POST)>0){
                         $_SESSION['message-success']="Berhasil memasukan sparepart";
                         header("Location: report-spareparts");exit;
                     }
                 }
-                if(isset($_POST['edit-sparepart'])){
-                    if(edit_report_sparepart($_POST)>0){
-                        $_SESSION['message-success']="Berhasil mengedit sparepart";
-                        header("Location: report-spareparts");exit;
-                    }
-                }
-                if(isset($_POST['delete-sparepart'])){
-                    if(delete_report_sparepart($_POST)>0){
-                        $_SESSION['message-success']="Berhasil menghapus sparepart";
-                        header("Location: report-spareparts");exit;
-                    }
-                }
+                // if(isset($_POST['edit-sparepart'])){
+                //     if(edit_report_sparepart($_POST)>0){
+                //         $_SESSION['message-success']="Berhasil mengedit sparepart";
+                //         header("Location: report-spareparts");exit;
+                //     }
+                // }
+                // if(isset($_POST['delete-sparepart'])){
+                //     if(delete_report_sparepart($_POST)>0){
+                //         $_SESSION['message-success']="Berhasil menghapus sparepart";
+                //         header("Location: report-spareparts");exit;
+                //     }
+                // }
             }
             if($_SESSION['id-role']<=5){ // => lebih kecil sama dengan teknisi & web dev/des
                 $data11=25;
