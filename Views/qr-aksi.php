@@ -172,6 +172,7 @@
                                                                 <?php if($row['id_status']<6){?>
                                                                 <form action="" method="POST" class="d-flex justify-content-center">
                                                                     <input type="hidden" name="id-user" value="<?= $row['id_user']?>">
+                                                                    <input type="hidden" name="barcode" value="<?= $row['barcode']?>">
                                                                     <input type="hidden" name="data-encrypt" value="<?= $row['data_encrypt']?>">
                                                                     <input type="hidden" name="id-layanan" value="<?= $row['id_layanan']?>">
                                                                     <input type="hidden" name="id-nota" value="<?= $row['id_nota']?>">

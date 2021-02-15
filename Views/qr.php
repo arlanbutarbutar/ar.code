@@ -29,6 +29,7 @@
 <html lang="id">
     <head>
         <?php require_once("../Application/access/header.php"); ?>
+        <style>@media print {body * {visibility: hidden;}#print, #print * {visibility: visible;}#print{position: absolute;left: 0;top: 0;}}</style>
     </head>
     <body id="page-top">
         <div id="wrapper">
@@ -58,7 +59,7 @@
                                         <div class="col-lg-4">
                                             <div class="card card-body border-0 shadow h-100 align-items-center text-center mt-3">
                                                 <h4 class="font-weight-bold" <?= $color_black ?>><?= "T".$row['id_nota_tinggal']." | DP".$row['id_nota_dp']." | L".$row['id_nota_lunas']?></h4>
-                                                <img src="../Assets/img/img-barcode-notes/<?= $row['barcode']?>" alt="barcode" style="width: 75%">
+                                                <img src="../Assets/img/img-barcode-notes/<?= $row['barcode']?>" alt="barcode" id="print" style="width: 40%">
                                                 <?php if($_SESSION['id-role']<=3){?>
                                                     <div class="d-flex justify-content-center mt-2">
                                                         <p class="small m-auto" <?= $color_black ?>>Buat ulang barcode!</p>
@@ -70,6 +71,7 @@
                                                             </div>
                                                         </form>
                                                     </div>
+                                                    <button type="button" name="print-now" class="btn btn-success btn-sm mt-2" onClick="window.print();"><i class="fas fa-print"></i> Print Now</button>
                                                 <?php }?>
                                             </div>
                                         </div>

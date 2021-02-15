@@ -179,14 +179,14 @@
                 modal.find('.modal-body input').val(recipient)
                 })
             // ==> print file
-                // function printDiv(elementId) {
-                //     var a = document.getElementById('printing-css').value;
-                //     var b = document.getElementById(elementId).innerHTML;
-                //     window.frames["print_frame"].document.title = document.title;
-                //     window.frames["print_frame"].document.body.innerHTML = '<style>' + a + '</style>' + b;
-                //     window.frames["print_frame"].window.focus();
-                //     window.frames["print_frame"].window.print();
-                // }
+                function printDiv(elementId) {
+                    var a = document.getElementById('printing-css').value;
+                    var b = document.getElementById(elementId).innerHTML;
+                    window.frames["print_frame"].document.title = document.title;
+                    window.frames["print_frame"].document.body.innerHTML = '<style>' + a + '</style>' + b;
+                    window.frames["print_frame"].window.focus();
+                    window.frames["print_frame"].window.print();
+                }
             // ==> search data
                 // $(document).ready(function(){
                 //     $('#keyword-nota-tinggal').on('keyup',function(){

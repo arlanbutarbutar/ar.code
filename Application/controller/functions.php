@@ -137,7 +137,8 @@
             // => all roles
                 $link_log="http://localhost/arcode/views/";
                 $date=date('l, d M Y'); $date_search=date('Y-m-d');
-                $link_qr="https://eefbd0fbc609.ngrok.io/ar.code/Views/qr-aksi?auth=";
+                $link_qr="https://d3a86350173d.ngrok.io/ar.code/Views/qr-aksi?auth=";
+                $link_qrsp="https://d3a86350173d.ngrok.io/ar.code/Views/qr-spareparts?auth=";
             // => role selection
                 if($_SESSION['id-role']<=6){ // => all administrator || ==> Dashboard || ==> web client services
                     function contact_user($msg){global $conn; // == mail-access => 2/contact user
@@ -845,6 +846,12 @@
                     }
                     function delete_notes($data){global $conn,$time,$date;
                         $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        $barcode=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['barcode']))));
+                        $files=glob("../Assets/img/img-barcode-notes/".$barcode);
+                        foreach ($files as $file) {
+                            if (is_file($file))
+                            unlink($file);
+                        }
                         $id_log=$_SESSION['id-log'];
                         $log="Menghapus nota user #".$id_user;
                         mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
@@ -1127,7 +1134,7 @@
                         mysqli_query($conn, "DELETE FROM laporan_spareparts WHERE id_sparepart='$id_sparepart'");
                         return mysqli_affected_rows($conn);
                     }
-                    function report_sparepart($data){global $conn,$time,$date,$date_search,$link_qr;
+                    function report_sparepart($data){global $conn,$time,$date,$date_search,$link_qrsp;
                         $cek_idSparepart=mysqli_query($conn, "SELECT * FROM laporan_spareparts ORDER BY id_sparepart DESC LIMIT 1");
                         $loop_idSparepart=mysqli_fetch_assoc($cek_idSparepart);
                         if(isset($loop_idSparepart['id_sparepart'])){
@@ -1144,7 +1151,7 @@
                         $total=$harga*$jumlah;
                         $ket_plus=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['ket-plus']))));
                         require_once('../Vendor/phpqrcode/qrlib.php');
-                        $qrvalue = $link_qr.$data_encrypt;
+                        $qrvalue = $link_qrsp.$data_encrypt;
                         $tempDir = "../Assets/img/img-barcode-spareparts/";
                         $codeContents = $qrvalue;
                         $barcode = $data_encrypt.".png";
@@ -1158,9 +1165,144 @@
                         mysqli_query($conn, "INSERT INTO laporan_spareparts(data_encrypt,tgl_masuk,tgl_cari,time,ket,suplayer,jmlh_barang,harga,total,ket_plus,qrcode,status_sparepart) VALUES('$data_encrypt','$date','$date_search','$time','$ket','$suplayer','$jumlah','$harga','$total','$ket_plus','$barcode','1')");
                         return mysqli_affected_rows($conn);
                     }
-                    function edit_report_sparepart($data){global $conn,$time,$date;}
-                    function delete_report_sparepart($data){global $conn,$time,$date;}
-                    // function blank__($data){global $conn,$time,$date;}
+                    function edit_report_sparepart($data){global $conn,$time,$date;
+                        $id_sparepart=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-sparepart']))));
+                        $ket=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['ket']))));
+                        $suplayer=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['suplayer']))));
+                        if(empty($suplayer) || $suplayer==0){
+                            $_SESSION['message-danger']="Kamu belum memasukan suplayer!";
+                            header("Location: report-spareparts");exit;
+                        }
+                        $jumlah=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['jumlah']))));
+                        $harga=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['harga']))));
+                        $total=$harga*$jumlah;
+                        $ket_plus=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['ket-plus']))));
+                        $id_log=$_SESSION['id-log'];
+                        $log="Mengedit data sparepart dengan ket ".$ket.", suplayer ".$suplayer." dan harga ".$harga;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE laporan_spareparts SET ket='$ket', suplayer='$suplayer', jmlh_barang='$jumlah', harga='$harga', total='$total', ket_plus='$ket_plus' WHERE id_sparepart='$id_sparepart'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function delete_report_sparepart($data){global $conn,$time,$date;
+                        $id_sparepart=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-sparepart']))));
+                        $ket=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['ket']))));
+                        $qrcode=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['qrcode']))));
+                        $files=glob("../Assets/img/img-barcode-spareparts/".$qrcode);
+                        foreach ($files as $file) {
+                            if (is_file($file))
+                            unlink($file);
+                        }
+                        $id_log=$_SESSION['id-log'];
+                        $log="Menghapus data sparepart #".$id_sparepart." dengan ket ".$ket;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "DELETE FROM laporan_spareparts WHERE id_sparepart='$id_sparepart'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function remake_qrcode_sparepart($data){global $conn,$time,$date,$link_qrsp;
+                        $id_sparepart=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-sparepart']))));
+                        $qr=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['qrcode']))));
+                        $files=glob("../Assets/img/img-barcode-spareparts/".$qr);
+                        foreach ($files as $file) {
+                            if (is_file($file))
+                            unlink($file);
+                        }
+                        $data_encrypt=crc32($id_sparepart);
+                        require_once('../Vendor/phpqrcode/qrlib.php');
+                        $qrvalue = $link_qrsp.$data_encrypt;
+                        $tempDir = "../Assets/img/img-barcode-spareparts/";
+                        $codeContents = $qrvalue;
+                        $qrcode = $data_encrypt.".png";
+                        $pngAbsoluteFilePath = $tempDir.$qrcode;
+                        if(!file_exists($pngAbsoluteFilePath)){
+                            QRcode::png($codeContents, $pngAbsoluteFilePath);
+                        }
+                        $id_log=$_SESSION['id-log'];
+                        $log="Membuat ulang qrcode sparepart #".$id_sparepart;
+                        mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                        mysqli_query($conn, "UPDATE laporan_spareparts SET data_encrypt='$data_encrypt', qrcode='$qrcode' WHERE id_sparepart='$id_sparepart'");
+                        return mysqli_affected_rows($conn);
+                    }
+                    function notes_sparepart($data){global $conn,$time,$date,$link_qrsp;
+                        $jumlah=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['jumlah']))));
+                        $data_encrypt=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['data-encrypt']))));
+                        $id_user=htmlspecialchars(addslashes(trim(mysqli_real_escape_string($conn, $data['id-user']))));
+                        if($jumlah>1){
+                            $cek_idSparepart=mysqli_query($conn, "SELECT * FROM laporan_spareparts ORDER BY id_sparepart DESC LIMIT 1");
+                            $loop_idSparepart=mysqli_fetch_assoc($cek_idSparepart);
+                            if(isset($loop_idSparepart['id_sparepart'])){
+                                $idSparepart=$loop_idSparepart['id_sparepart'];
+                                $id_sparepart=$idSparepart+1;
+                            }else if(!isset($loop_idSparepart['id_sparepart'])){
+                                $id_sparepart=1;
+                            }
+                            $data_encrypt_baru=crc32($id_sparepart);
+                            $check_sparepart=mysqli_query($conn, "SELECT * FROM laporan_spareparts WHERE data_encrypt='$data_encrypt'");
+                            if(mysqli_num_rows($check_sparepart)>0){
+                                $row_sp=mysqli_fetch_assoc($check_sparepart);
+                                $check_notes=mysqli_query($conn, "SELECT * FROM notes WHERE id_user='$id_user'");
+                                if(mysqli_num_rows($check_notes)>0){
+                                    $row=mysqli_fetch_assoc($check_notes);
+                                    $tgl_masuk=$row_sp['tgl_masuk'];
+                                    $tgl_cari=$row_sp['tgl_cari'];
+                                    $time=$row_sp['time'];
+                                    $ket=$row_sp['ket'];
+                                    $suplayer=$row_sp['suplayer'];
+                                    $jmlh_sk=$jumlah-1;
+                                    $harga=$row_sp['harga'];
+                                    $total=$row_sp['total'];
+                                    $ket_plus=$row_sp['ket_plus'];
+                                    $id_pegawai=$row['id_pegawai'];
+                                    if(!empty($row['id_nota_tinggal'])){
+                                        $id_nota=$row['id_nota_tinggal'];
+                                    }else{
+                                        $id_nota=$row['id_nota_lunas'];
+                                    }
+                                    require_once('../Vendor/phpqrcode/qrlib.php');
+                                    $qrvalue = $link_qrsp.$data_encrypt_baru;
+                                    $tempDir = "../Assets/img/img-barcode-spareparts/";
+                                    $codeContents = $qrvalue;
+                                    $qrcode = $data_encrypt_baru.".png";
+                                    $pngAbsoluteFilePath = $tempDir.$qrcode;
+                                    if(!file_exists($pngAbsoluteFilePath)){
+                                        QRcode::png($codeContents, $pngAbsoluteFilePath);
+                                    }
+                                    require_once('../Assets/vendor/autoload.php');
+                                    $Bar = new Picqer\Barcode\BarcodeGeneratorHTML();
+                                    $barcode = $Bar->getBarcode($data_encrypt, $Bar::TYPE_CODE_128);
+                                    $id_log=$_SESSION['id-log'];
+                                    $log="Memasukan nomor nota pada sparepart #".$data_encrypt;
+                                    mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                                    mysqli_query($conn, "INSERT INTO laporan_spareparts(id_sparepart,id_user,data_encrypt,tgl_masuk,tgl_cari,time,ket,suplayer,jmlh_barang,harga,total,ket_plus,id_pegawai,id_nota,qrcode,barcode,status_sparepart) VALUES('$id_sparepart','$id_user','$data_encrypt_baru','$tgl_masuk','$tgl_cari','$time','$ket','$suplayer','1','$harga','$harga','$ket_plus','$id_pegawai','$id_nota','$qrcode','$barcode','2')");
+                                    mysqli_query($conn, "UPDATE laporan_spareparts SET jmlh_barang='$jmlh_sk' WHERE data_encrypt='$data_encrypt'");
+                                    return mysqli_affected_rows($conn);
+                                }
+                            }
+                        }else if($jumlah==1){
+                            $check_notes=mysqli_query($conn, "SELECT * FROM notes WHERE id_user='$id_user'");
+                            if(mysqli_num_rows($check_notes)>0){
+                                $row=mysqli_fetch_assoc($check_notes);
+                                if(!empty($row['id_nota_tinggal'])){
+                                    $id_nota=$row['id_nota_tinggal'];
+                                }else{
+                                    $id_nota=$row['id_nota_lunas'];
+                                }
+                                $id_teknisi=$row['id_pegawai'];
+                                require_once('../Assets/vendor/autoload.php');
+                                $Bar = new Picqer\Barcode\BarcodeGeneratorHTML();
+                                $barcode = $Bar->getBarcode($data_encrypt, $Bar::TYPE_CODE_128);
+                                $id_log=$_SESSION['id-log'];
+                                $log="Memasukan nomor nota pada sparepart #".$data_encrypt;
+                                mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                                mysqli_query($conn, "UPDATE laporan_spareparts SET id_user='$id_user', id_nota='$id_nota', id_pegawai='$id_teknisi', barcode='$barcode', status_sparepart='2' WHERE data_encrypt='$data_encrypt'");
+                                return mysqli_affected_rows($conn);
+                            }
+                        }
+                    }
+                    // function blank__($data){global $conn,$time,$date;
+                        // $id_log=$_SESSION['id-log'];
+                        // $log="";
+                        // mysqli_query($conn, "INSERT INTO users_log(id_log,log,date,time) VALUES('$id_log','$log','$date','$time')");
+                    // }
                 }
                 if($_SESSION['id-role']<=5){ // => teknisi & web dev/des
                     function notes_progress($data){global $conn,$time,$date;
